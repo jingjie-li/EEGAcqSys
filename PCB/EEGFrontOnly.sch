@@ -5170,7 +5170,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-2.54" y1="-2.54" x2="10.16" y2="-2.54" width="0.127" layer="21"/>
 <wire x1="10.16" y1="-2.54" x2="10.16" y2="2.54" width="0.127" layer="21"/>
 <wire x1="10.16" y1="2.54" x2="-2.54" y2="2.54" width="0.127" layer="21"/>
-<text x="-2.54" y="-5.08" size="1.27" layer="21">B0505S-1W</text>
+<text x="-2.54" y="3.175" size="1.27" layer="25">&gt;NAME</text>
+<text x="4.445" y="3.175" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 <package name="SOT95P280X145-5N">
 <smd name="1" x="-1.2954" y="0.9398" dx="1.27" dy="0.5588" layer="1"/>

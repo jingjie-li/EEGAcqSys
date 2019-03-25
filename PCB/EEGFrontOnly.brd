@@ -3,13 +3,13 @@
 <eagle version="8.6.0">
 <drawing>
 <settings>
-<setting alwaysvectorfont="yes"/>
+<setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="5" unitdist="mil" unit="mil" style="lines" multiple="1" display="no" altdistance="5" altunitdist="mil" altunit="mil"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
 <layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
@@ -22,7 +22,7 @@
 <layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
 <layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
 <layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="no" active="yes"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
@@ -208,7 +208,6 @@
 <text x="73.533" y="40.894" size="0.889" layer="21" font="vector" ratio="20" rot="R90">BAT_PWR</text>
 <text x="55.626" y="43.688" size="0.889" layer="21" font="vector" ratio="20">DC_ISO</text>
 <text x="56.134" y="42.418" size="0.889" layer="21" font="vector" ratio="20">CONN</text>
-<text x="32.639" y="44.323" size="1.27" layer="21" font="vector" ratio="20">U2</text>
 <text x="30.734" y="42.418" size="0.889" layer="21" font="vector" ratio="20">DC_ISO</text>
 <text x="52.451" y="10.541" size="0.889" layer="21" font="vector">*</text>
 <text x="69.342" y="37.338" size="0.635" layer="21" font="vector" ratio="20">PWR_LED</text>
@@ -734,7 +733,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-2.54" y1="-2.54" x2="10.16" y2="-2.54" width="0.127" layer="21"/>
 <wire x1="10.16" y1="-2.54" x2="10.16" y2="2.54" width="0.127" layer="21"/>
 <wire x1="10.16" y1="2.54" x2="-2.54" y2="2.54" width="0.127" layer="21"/>
-<text x="-2.54" y="-5.08" size="1.27" layer="21">B0505S-1W</text>
+<text x="-2.54" y="3.175" size="1.27" layer="25">&gt;NAME</text>
+<text x="4.445" y="3.175" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 <package name="SOT95P280X145-5N">
 <smd name="1" x="-1.2954" y="0.9398" dx="1.27" dy="0.5588" layer="1"/>
@@ -1181,9 +1181,9 @@ a wide range of applications. Your particular design
 may have different requirements, so please make the
 necessary adjustments and save your customized
 design rules under a new name.</description>
-<param name="layerSetup" value="(1*2*15*16)"/>
+<param name="layerSetup" value="(1*16)"/>
 <param name="mtCopper" value="0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm"/>
-<param name="mtIsolate" value="0.8mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.8mm"/>
+<param name="mtIsolate" value="1.53mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.8mm"/>
 <param name="mdWireWire" value="6mil"/>
 <param name="mdWirePad" value="6mil"/>
 <param name="mdWireVia" value="6mil"/>
@@ -1377,8 +1377,14 @@ design rules under a new name.</description>
 <attribute name="PROD_ID" value="RES-13766" x="52.2275" y="9.8645" size="1.778" layer="27" display="off"/>
 <attribute name="VALUE" x="52.4815" y="11.1345" size="0.6096" layer="27" font="vector" ratio="20" align="top-center"/>
 </element>
-<element name="U2" library="jingjieparts" package="DIP4" value="B0505S-1WB0505S-1W" x="37.75685" y="43.66235"/>
-<element name="J3" library="SparkFun-Connectors" package="1X02" value="" x="51.054" y="44.5135" rot="R270"/>
+<element name="U2" library="jingjieparts" package="DIP4" value="B0505S-1WB0505S-1W" x="37.75685" y="43.66235" smashed="yes">
+<attribute name="NAME" x="32.42285" y="44.29735" size="1.27" layer="25"/>
+<attribute name="VALUE" x="42.20185" y="46.83735" size="1.27" layer="27"/>
+</element>
+<element name="J3" library="SparkFun-Connectors" package="1X02" value="" x="51.054" y="44.5135" smashed="yes" rot="R270">
+<attribute name="NAME" x="49.022" y="45.7835" size="0.6096" layer="25" font="vector" ratio="20" rot="R270"/>
+<attribute name="VALUE" x="49.022" y="45.7835" size="0.6096" layer="27" font="vector" ratio="20" rot="R270"/>
+</element>
 <element name="J4" library="SparkFun-Connectors" package="1X02" value="" x="53.848" y="44.5135" rot="R270"/>
 <element name="U3" library="Texas Instruments_By_element14_Batch_1" package="SOT95P280X145-5N" value="TPS60403DBVT" x="54.4555" y="36.159" smashed="yes" rot="R180">
 <attribute name="MPN" value="TPS60403DBVT" x="54.4555" y="36.159" size="1.778" layer="27" rot="R180" display="off"/>
