@@ -25,8 +25,6 @@
 
 /*********************************************函数申明************************************************/
 void delay(Uint32 t);
-void DisData_Trans(Uint16 data);
-void Sellect_Bit(Uint16 i);
 void Init_LEDS_Gpio(void);
 void spi_xmit(Uint16 a);
 void spi_fifo_init(void);
@@ -35,15 +33,25 @@ void delay(Uint32 t);
 void scib_init(void);
 void scib_fifo_init(void);
 void scib_xmit(int a);
+Uint16 spi_send(Uint16 b);
 Uint16 spi_rcv(void);
+Uint16 ads1299_read2reg(Uint16 addr, Uint16 nums);
+void scib_msg(char *msg);
 /*****************************************************************************************************/
 
 /************************************定义相关变量*********************************************/
-unsigned char msg[10]={0xC0,0xf9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90};	//段码：0~9
-unsigned char DisData_Bit[4] = {0};											//存放拆分后的四位数字
-Uint16 DisData = 0;															//显示的数字
-Uint16 Loop = 0;															//循环扫描变量
+//unsigned char msg[10]={0xC0,0xf9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90};	//段码：0~9
+//unsigned char DisData_Bit[4] = {0};											//存放拆分后的四位数字
+//Uint16 DisData = 0;	
+unsigned char data_to_send=0x30;														//显示的数字
+Uint16 Loop = 0;
+Uint16 i = 0;	
+Uint16 ads_addr=0;														//循环扫描变量
 Uint16 Spi_Rcv_Data = 0;
+Uint16 Sci_Send_Data = 0;
+Uint16 Spi_Send_Data = 0;
+Uint16 ADS_Rcv_Data = 0;
+Uint16 ADS1299_Rcv_Data = 0;
 
 /*****************************************************************************************************/
 
@@ -79,53 +87,9 @@ void Init_LEDS_Gpio(void)
     RST_BIT1;
     RST_BIT2;
     RST_BIT3;
-    RST_BIT4;   
+    SET_BIT4;   
 }
 /*****************************************************************************************************/
-
-
-/******************************数码管位选函数（从低位到高位扫描）***************************************************/
-void Sellect_Bit(Uint16 i)
-{
-	switch(i)
-	{
-		case 0:
-			RST_BIT4;									//关断数码管第四位	
-			SET_BIT1;									//选通数码管第一位
-			break;
-
-		case 1:
-			RST_BIT1;									//关断数码管第一位
-			SET_BIT2;									//选通数码管第二位
-			break;
-
-		case 2:
-			RST_BIT2;									//关断数码管第二位
-			SET_BIT3;									//选通数码管第三位
-			break;
-
-		case 3:
-			RST_BIT3;									//关断数码管第三位
-			SET_BIT4;									//选通数码管第四位
-			break;
-
-		default:
-			break;
-	}
-}
-/*****************************************************************************************************/
-
-/************************** 拆分要显示的四位数保存到数组DisData_Trans【】*****************************/
-void DisData_Trans(Uint16 data)
-{
-	DisData_Bit[3] = data / 1000;						//千位数
-	DisData_Bit[2] = data % 1000 / 100 ;				//百位数
-	DisData_Bit[1] = data % 100 / 10;					//十位数
-	DisData_Bit[0] = data % 10;							//个位数
-}
-/*****************************************************************************************************/
-
-
 
 /*********************************************延时函数************************************************/
 void delay(Uint32 t)
@@ -135,16 +99,47 @@ void delay(Uint32 t)
 }
 /*****************************************************************************************************/
 
+Uint16 ads1299_read2reg(Uint16 addr, Uint16 nums)
+{
+	//RST_BIT4; //ACT AS CS
+	Spi_Send_Data=((addr<<8)|0x2000|nums);
+	
+	spi_xmit(Spi_Send_Data&0xff00);
+	spi_xmit((Spi_Send_Data<<8)&0xff00);
+	
+	//delay(1000);
+	
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	
+	delay(1000);
+	//SET_BIT4; //ACT AS CS
+	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+	//delay(100000);
+	while(SpiaRegs.SPIFFRX.bit.RXFFST <2) {} 
+	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+	//delay(1000);
+	while(SpiaRegs.SPIFFRX.bit.RXFFST >1) {} 
+	ADS1299_Rcv_Data=SpiaRegs.SPIRXBUF;	
+	ADS1299_Rcv_Data += Spi_Rcv_Data<<8;
+	return ADS1299_Rcv_Data;
+	
+}
+
 /*********************************************Spi初始化************************************************/
 
 void spi_init()
-{    
-	SpiaRegs.SPICCR.all =0x004F;	             			// Reset on, rising edge, 16-bit char bits
+{ 
+	SpiaRegs.SPICCR.all =0x0007;     //8 bit length
+	//SpiaRegs.SPICCR.all =0x000f;       //falling edge 16bits
+	//SpiaRegs.SPICCR.all =0x004F;	             			// Reset on, rising edge, 16-bit char bits
 	                                             			//0x000F对应Rising Edge，0x004F对应Falling Edge  
 	SpiaRegs.SPICTL.all =0x0006;    		     			// Enable master mode, normal phase,
                                                  			// enable talk, and SPI int disabled.
-	SpiaRegs.SPIBRR =0x007F;									
-    SpiaRegs.SPICCR.all =0x00DF;		         			// Relinquish SPI from Reset   
+	SpiaRegs.SPIBRR =0x007F;
+	SpiaRegs.SPICCR.all =0x0087;									
+    //SpiaRegs.SPICCR.all =0x008F;		         			// Relinquish SPI from Reset   
     SpiaRegs.SPIPRI.bit.FREE = 1;                			// Set so breakpoints don't disturb xmission
 }
 /*****************************************************************************************************/
@@ -188,14 +183,28 @@ void scib_xmit(int a)
 
 }
 
+void scib_msg(char * msg)
+{
+    int i;
+    i = 0;
+    while(msg[i] != '\0')
+    {
+        scib_xmit(msg[i]);
+        i++;
+    }
+}
+
 
 /****************************************Spi模块FIFO设置**********************************************/
 void spi_fifo_init()										
 {
 // Initialize SPI FIFO registers
     SpiaRegs.SPIFFTX.all=0xE040;
+    SpiaRegs.SPIFFRX.bit.RXFIFORESET=0;
     SpiaRegs.SPIFFRX.all=0x204f;
     SpiaRegs.SPIFFCT.all=0x0;
+    //delay(5000);
+    //SpiaRegs.SPIFFRX.bit.RXFIFORESET=1;
 }  
 
 /*****************************************************************************************************/
@@ -205,11 +214,19 @@ void spi_fifo_init()
 void spi_xmit(Uint16 a)
 {
     SpiaRegs.SPITXBUF=a;
+}
+
+Uint16 spi_send(Uint16 b)
+{
+	SpiaRegs.SPITXBUF=b;
+	while(SpiaRegs.SPIFFRX.bit.RXFFST <1) {} 
+	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;
+	return Spi_Rcv_Data;
 }    
 /*****************************************************************************************************/
 Uint16 spi_rcv(void)
 {
-	while(SpiaRegs.SPIFFRX.bit.RXFFST !=1) { } 
+	while(SpiaRegs.SPIFFRX.bit.RXFFST <1) { } 
 	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
 	return Spi_Rcv_Data;
 }
@@ -217,6 +234,7 @@ Uint16 spi_rcv(void)
 void main(void)
 {
 
+   char *msg;
 // Step 1. Initialize System Control:
 // PLL, WatchDog, enable Peripheral Clocks
 // This example function is found in the DSP280x_SysCtrl.c file.
@@ -269,23 +287,56 @@ void main(void)
    
    scib_fifo_init();	   // Initialize the SCI FIFO
    scib_init();  // Initalize SCI for echoback
+   
+   
+   SET_BIT1; //PWD IO63
+   SET_BIT2; //RST IO62
+   RST_BIT3; //START
+   SET_BIT4; //ACT AS CS
+   delay(500);
+   
+   //RST_BIT4;
+   spi_xmit(0x0200);// wake up
+   //SET_BIT4;
+   delay(100);
+   //RST_BIT4;
+   spi_xmit(0x0600);// reset
+   //SET_BIT4;
+   delay(100);	
+   //RST_BIT4;
+   spi_xmit(0x1100);//enable reading
+   //SET_BIT4;
+   delay(1000);
+   Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+   Spi_Rcv_Data=SpiaRegs.SPIRXBUF;
+   Spi_Rcv_Data=SpiaRegs.SPIRXBUF;
+   
+   msg = "\r\n\Start ADS1299 SPI Interface Testing\0";
+   scib_msg(msg);
 
+   
 	for(;;)
 	{
-		
-		DisData_Trans(DisData);									//拆分四位数
-		for(Loop=0;Loop<4;Loop++)								//分别显示四位
+		for(i=0;i<23;i++)
 		{
-			Sellect_Bit(Loop);									//选择要扫描的数码管位
-			spi_xmit(msg[DisData_Bit[Loop]]);					//串行输出要显示的数字
-			//scib_xmit(msg[DisData_Bit[Loop]]&0xff);
-			delay(25000);										//延时配合人眼反应时间
-			scib_xmit(0x55);
+		ADS_Rcv_Data=ads1299_read2reg(ads_addr,0x01);
+		delay(25000);										//延时配合人眼反应时间
+		//scib_xmit(0x55);
+		msg = "\r\n\Read Reg:0x\0";
+		scib_msg(msg);
+		data_to_send = ads_addr+0x30;
+		scib_xmit(data_to_send);
+		msg = "  Results:0x\0";
+		scib_msg(msg);
+		Sci_Send_Data=((ADS_Rcv_Data>>8)&0x00ff);
+		data_to_send = Sci_Send_Data+0x30;
+		scib_xmit(data_to_send);
+		Sci_Send_Data=(ADS_Rcv_Data&0x00ff);
+		data_to_send = Sci_Send_Data+0x30;
+		scib_xmit(data_to_send);
+		delay(25000);
+		ads_addr++;
 		}
-
-		DisData++;												//显示数字自加
-		if(DisData > 9999)										//防止溢出 归零
-		DisData = 0;
 	}
 
 
