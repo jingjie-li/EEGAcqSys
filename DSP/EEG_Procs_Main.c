@@ -112,7 +112,8 @@ Uint16 ads1299_read2reg(Uint16 addr, Uint16 nums)
 	spi_xmit(0x00);
 	spi_xmit(0x00);
 	
-	delay(1000);
+	//delay(1000);
+	while (SpiaRegs.SPIFFRX.bit.RXFFST != 4) {}
 	//SET_BIT4; //ACT AS CS
 	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
 	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
@@ -306,7 +307,8 @@ void main(void)
    //RST_BIT4;
    spi_xmit(0x1100);//enable reading
    //SET_BIT4;
-   delay(1000);
+   //delay(1000);
+   while (SpiaRegs.SPIFFRX.bit.RXFFST != 3) {}
    Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
    Spi_Rcv_Data=SpiaRegs.SPIRXBUF;
    Spi_Rcv_Data=SpiaRegs.SPIRXBUF;
