@@ -4,6 +4,7 @@ Serial myPort;    // The serial port
 byte[] inBuffer = new byte[30];
 byte[] inBufferWaste=new byte[52];
 //int lf = 10;      // ASCII linefeed 
+boolean DAFlag=false;
 int lf=3338;
 //int lf=854720;
 int[] ECGdatas = new int[3];
@@ -83,8 +84,8 @@ void setup() {
   printArray(Serial.list());
   myPort = new Serial(this, Serial.list()[2], 115200); 
   //myPort.write('P');
-  //inBufferWaste = myPort.readBytes(50);
-  myPort.clear();
+  //inBufferWaste = myPort.readBytes(30);
+  //myPort.clear();
   thread("readDataThread");
 }
 
@@ -92,19 +93,34 @@ void draw() {
   background(200);
   drawEEGlines();
 }
-
+void displaybuffData(byte[] inBuffer){
+  print(hex(inBuffer[0])+" ");
+  for(int i=1;i<28;i++)
+  {
+    print(hex(inBuffer[i])+" ");
+  }
+  println(hex(inBuffer[28]));
+}
 void readDataThread(){
-  //myPort.clear();
+  myPort.clear();
+  //inBuffer = myPort.readBytes(1);
+  myPort.readBytesUntil(lf, inBuffer);
   while(true){
-    while (myPort.available() > 30) {
-      myPort.readBytesUntil(lf, inBuffer); // until 0x0A
+    while (myPort.available() < 28){};
+    if (DAFlag) {
+      inBuffer[25]=0;inBuffer[26]=0;inBuffer[27]=0;inBuffer[28]=0;
+      //myPort.readBytesUntil(lf, inBuffer); // until 0x0A
+      inBuffer = myPort.readBytes(29);
+      displaybuffData(inBuffer);
+      //displaybuffData(inBufferWaste);
       if(int(inBuffer[0])==192){
-        print(hex(inBuffer[0])+" ");
-        for(int i=1;i<28;i++)
-        {
-          print(hex(inBuffer[i])+" ");
-        }
-        println(hex(inBuffer[28]));
+        //displaybuffData(inBuffer);
+        //print(hex(inBuffer[0])+" ");
+        //for(int i=1;i<28;i++)
+        //{
+          //print(hex(inBuffer[i])+" ");
+        //}
+        //println(hex(inBuffer[28]));
         STAT=(convertByte(inBuffer[0])<<16)+(convertByte(inBuffer[1])<<8)+convertByte(inBuffer[2]);
         print("STAT: "+hex(STAT)+" ");
         for(int ss=0;ss<8;ss++)
@@ -118,14 +134,35 @@ void readDataThread(){
           print("EEGData"+ss+": "+(EEGdatas[ss])+" ");
         }
         println(" ");
-        updateDataEEG(EEGdatas[5]);
-        delay(1);
-      }else{
-        //delay(1);
+        updateDataEEG(EEGdatas[6]);
+        delay(2);
       }
+    }else{//DAFlag=0
+        myPort.readBytesUntil(lf, inBufferWaste);
+        if(ifexist0D0A(inBufferWaste)){
+          DAFlag=true;
+        }
+        delay(1);
     }
-    delay(1);
+    delay(2);
   }
+}
+
+boolean ifexist0D0A(byte[] inBufferWaste){
+  boolean res=false;
+  int Position0A=1;
+  for(int i=1;i<30;i++){
+    if(int(inBufferWaste[i])==10){//0x0A
+      Position0A=i;
+      break;
+    }
+  }
+  if(int(inBufferWaste[Position0A-1])==13){//0x0D
+    res=true;
+  }else{
+    res=false;
+  }
+  return res;
 }
 
 void stop() {
@@ -140,12 +177,13 @@ void updateDataEEG(int EEGdata){
   //if(EEG1_baseline.isabnormal(EEGdata)){
     //EEGdata=EEG1_baseline.prevdata;
   //}
-  a=0.00001;
+  a=0.01;
+  //b=1800; 
   //b=EEG1_baseline.compute(a,200);
-  b=300;
-  //println("baseline: "+b);
+  b=-900; 
+  println("baseline: "+b);
   displayEEGdata[pointerEEG]=abs((-a*(float(EEGdata))+b));//resize 0x1FFFFF
-  //println("baseline computed: "+displayEEGdata[pointerEEG]);
+  println("baseline computed: "+displayEEGdata[pointerEEG]);
   pointerEEG++;
 }
 
