@@ -39,6 +39,7 @@ class ComputeBaseline {
   int datasum;
   float[] baselinedatas = new float[100];
   float meansumval=0;
+  float baselineval=200;
   int prevdata=0;
   ComputeBaseline (){
     datapointer=0;
@@ -70,7 +71,10 @@ class ComputeBaseline {
       for(int i=0;i<100;i++){
         meansumval+=baselinedatas[i];
       }
-      return ((meansumval/100)*factor+base);
+      if(abs(baselineval-((meansumval/100)*factor+base))>200){
+        baselineval=(meansumval/100)*factor+base; //update baseline only while too large
+      }
+      return baselineval;
     }
     else{
       return 200;
