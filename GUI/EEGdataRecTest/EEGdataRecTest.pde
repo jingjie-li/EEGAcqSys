@@ -115,7 +115,7 @@ void readDataThread(){
     while (myPort.available() < 28){};
     if (DAFlag) {
       inBuffer = myPort.readBytes(29);
-      displaybuffData(inBuffer);
+      //displaybuffData(inBuffer);
       if(int(inBuffer[0])==192){
         STAT=(convertByte(inBuffer[0])<<16)+(convertByte(inBuffer[1])<<8)+convertByte(inBuffer[2]);
         print("STAT: "+hex(STAT)+" ");
@@ -131,8 +131,7 @@ void readDataThread(){
           //print("EEGData"+ss+": "+(EEGdatas[ss])+" ");
           print("EEGDataFloat"+ss+": "+(EEGdatasRead[ss])+" ");
         }
-        EEGdatasRead[6]-=offsetSum/500;;
-        println("EEGDataFloat6"+EEGdatasRead[6]);
+        println("EEGDataFloat6: "+EEGdatasRead[6]+"Offset: "+offsetSum/500);
         if(OffsetPosi<500){
           offsetSum+=EEGdatasRead[6];
           OffsetPosi++;
@@ -142,6 +141,7 @@ void readDataThread(){
             myPort.write('P');
             EnteringPloting=true;
           }
+          EEGdatasRead[6]-=offsetSum/500;
           updateDataEEG(EEGdatasRead[6]);
         }
         delay(2);
@@ -193,7 +193,7 @@ void updateDataEEG(float EEGdata){
   //b=-900; 
   println("baseline: "+b);
   displayEEGdata[pointerEEG]=abs((-a*(EEGdata)+b));//resize 0x1FFFFF
-  println("baseline computed: "+displayEEGdata[pointerEEG]);
+  println("Data to Display Converted: "+displayEEGdata[pointerEEG]);
   pointerEEG++;
 }
 
