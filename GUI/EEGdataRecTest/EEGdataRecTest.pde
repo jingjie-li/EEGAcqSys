@@ -5,6 +5,8 @@ byte[] inBuffer = new byte[30];
 byte[] inBufferWaste=new byte[52];
 //int lf = 10;      // ASCII linefeed 
 boolean DAFlag=false;
+boolean EnteringPloting=false;
+int OffsetPosi=0;
 int lf=3338;
 //int lf=854720;
 int[] ECGdatas = new int[3];
@@ -16,6 +18,7 @@ int pointer=0;
 int pointerPPG=0;
 int pointerEEG=0;
 int STAT=0;
+float offsetSum = 0;
 float[] displaydata = new float[1000]; //150Hz, 6.67s  150Hz, 200Hz sampleing rate, display 10s
 
 float[] displayPPG1data = new float[333]; //200Hz sampleing rate, display 10s
@@ -36,31 +39,31 @@ float y = 100;
 
 class ComputeBaseline {
   int datapointer;
-  int datasum;
+  float datasum;
   float[] baselinedatas = new float[100];
   float meansumval=0;
   float baselineval=200;
-  int prevdata=0;
+  float prevdata=0;
   ComputeBaseline (){
     datapointer=0;
     datasum=0;
   }
-  boolean isabnormal(int data){
+  boolean isabnormal(float data){
     //return (abs(data-prevdata)>600&&prevdata!=0);
     return (abs(data-prevdata)>60000&&prevdata!=0);
   }
-  boolean isabnormalin(int data){
+  boolean isabnormalin(float data){
     //return (abs(data-prevdata)>200&&prevdata!=0);
     return (abs(data-prevdata)>200000&&prevdata!=0);
   }
-  void addEEGData(int data){
+  void addEEGData(float data){
     if(datapointer>99){
       datapointer=0;
     }
     if(isabnormalin(data)){// delete abnomal val
       //data=prevdata;
     }
-    baselinedatas[datapointer]=float(data);
+    baselinedatas[datapointer]=data;
     datapointer++;
     datasum++;
     prevdata=data;
@@ -87,7 +90,7 @@ void setup() {
   size(1000, 800);
   printArray(Serial.list());
   myPort = new Serial(this, Serial.list()[2], 115200); 
-  //myPort.write('P');
+  myPort.write('B');
   //inBufferWaste = myPort.readBytes(30);
   //myPort.clear();
   thread("readDataThread");
@@ -107,24 +110,13 @@ void displaybuffData(byte[] inBuffer){
 }
 void readDataThread(){
   myPort.clear();
-  //inBuffer = myPort.readBytes(1);
-  myPort.readBytesUntil(lf, inBuffer);
+  //myPort.readBytesUntil(lf, inBuffer);
   while(true){
     while (myPort.available() < 28){};
     if (DAFlag) {
-      inBuffer[25]=0;inBuffer[26]=0;inBuffer[27]=0;inBuffer[28]=0;
-      //myPort.readBytesUntil(lf, inBuffer); // until 0x0A
       inBuffer = myPort.readBytes(29);
       displaybuffData(inBuffer);
-      //displaybuffData(inBufferWaste);
       if(int(inBuffer[0])==192){
-        //displaybuffData(inBuffer);
-        //print(hex(inBuffer[0])+" ");
-        //for(int i=1;i<28;i++)
-        //{
-          //print(hex(inBuffer[i])+" ");
-        //}
-        //println(hex(inBuffer[28]));
         STAT=(convertByte(inBuffer[0])<<16)+(convertByte(inBuffer[1])<<8)+convertByte(inBuffer[2]);
         print("STAT: "+hex(STAT)+" ");
         for(int ss=0;ss<8;ss++)
@@ -134,11 +126,24 @@ void readDataThread(){
           {
             EEGdatas[ss]=-(((~EEGdatas[ss])&0x7fffff)+1);
           }
-          EEGdatasRead[ss]=float(EEGdatas[ss])*2.5*1000*16/(2^24);
-          print("EEGData"+ss+": "+(EEGdatas[ss])+" ");
+          //EEGdatas[6]=EEGdatas[6]-mean(float(offsetRcv));
+          EEGdatasRead[ss]=(float(EEGdatas[ss])*4.5*2/16)/(2^24);//in mV
+          //print("EEGData"+ss+": "+(EEGdatas[ss])+" ");
+          print("EEGDataFloat"+ss+": "+(EEGdatasRead[ss])+" ");
         }
-        println(" ");
-        updateDataEEG(EEGdatas[6]);
+        EEGdatasRead[6]-=offsetSum/500;;
+        println("EEGDataFloat6"+EEGdatasRead[6]);
+        if(OffsetPosi<500){
+          offsetSum+=EEGdatasRead[6];
+          OffsetPosi++;
+        }else{
+          if(EnteringPloting==false){
+            delay(50);
+            myPort.write('P');
+            EnteringPloting=true;
+          }
+          updateDataEEG(EEGdatasRead[6]);
+        }
         delay(2);
       }
     }else{//DAFlag=0
@@ -173,7 +178,7 @@ void stop() {
   myPort.write('T');
 } 
 
-void updateDataEEG(int EEGdata){
+void updateDataEEG(float EEGdata){
   if (pointerEEG>=999){
     pointerEEG=0;
   }
@@ -181,12 +186,13 @@ void updateDataEEG(int EEGdata){
   //if(EEG1_baseline.isabnormal(EEGdata)){
     //EEGdata=EEG1_baseline.prevdata;
   //}
-  a=0.01;
+  a=1;
+  //a=0.01;
   //b=1800; 
-  //b=EEG1_baseline.compute(a,200);
-  b=-900; 
+  b=EEG1_baseline.compute(a,200);
+  //b=-900; 
   println("baseline: "+b);
-  displayEEGdata[pointerEEG]=abs((-a*(float(EEGdata))+b));//resize 0x1FFFFF
+  displayEEGdata[pointerEEG]=abs((-a*(EEGdata)+b));//resize 0x1FFFFF
   println("baseline computed: "+displayEEGdata[pointerEEG]);
   pointerEEG++;
 }
