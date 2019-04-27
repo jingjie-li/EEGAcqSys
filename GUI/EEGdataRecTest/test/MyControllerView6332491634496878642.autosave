@@ -1,0 +1,32 @@
+&&//ControllerView to Modify the behavior and the shape color size of each controller
+class start_button_view implements ControllerView<Button> {
+
+  public void display(PGraphics pg, Button theButton) {
+    pg.pushMatrix();
+    if (theButton.isInside()) {
+      if (theButton.isPressed()) { // button is pressed
+        pg.fill(color(#57068C));
+        pg.stroke(color(#A56060));
+      }  else { // mouse hovers the button
+        pg.fill(200, 160, 100);
+        pg.stroke(color(#A56060));
+      }
+      }
+     else { // the mouse is located outside the button area
+       pg.fill(color(#57068C));
+    }
+    pg.textSize(20);
+    pg.text(system_start?"stop":"start",0,0);
+
+    pg.ellipse(0, 0, theButton.getWidth(), theButton.getHeight());
+    
+    // center the caption label 
+    int x = theButton.getWidth()/2 - theButton.getCaptionLabel().getWidth()/2;
+    int y = theButton.getHeight()/2 - theButton.getCaptionLabel().getHeight()/2;
+    
+    translate(x, y);
+    theButton.getCaptionLabel().draw(pg);
+    
+    pg.popMatrix();
+  }
+}

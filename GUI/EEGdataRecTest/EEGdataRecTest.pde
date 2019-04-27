@@ -3,12 +3,11 @@ Serial myPort;    // The serial port
 
 byte[] inBuffer = new byte[30];
 byte[] inBufferWaste=new byte[52];
-//int lf = 10;      // ASCII linefeed 
+int lf = 10;      // ASCII linefeed 
 boolean DAFlag=false;
 boolean EnteringPloting=false;
 int OffsetPosi=0;
-int lf=3338;
-//int lf=854720;
+  //int lf=854720;
 int[] ECGdatas = new int[3];
 int[] EEGdatas = new int[8];
 float[] EEGdatasRead = new float[8];
@@ -89,7 +88,7 @@ void setup() {
   frameRate(30);
   size(1000, 800);
   printArray(Serial.list());
-  myPort = new Serial(this, Serial.list()[2], 115200); 
+  myPort = new Serial(this, Serial.list()[5], 115200); 
   myPort.write('B');
   //inBufferWaste = myPort.readBytes(30);
   //myPort.clear();
@@ -112,7 +111,7 @@ void readDataThread(){
   myPort.clear();
   //myPort.readBytesUntil(lf, inBuffer);
   while(true){
-    while (myPort.available() < 28){};
+    while (myPort.available() < 28){delay(1);};
     if (DAFlag) {
       inBuffer = myPort.readBytes(29);
       //displaybuffData(inBuffer);
