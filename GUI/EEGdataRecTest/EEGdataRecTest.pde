@@ -111,7 +111,9 @@ void readDataThread(){
   myPort.clear();
   //myPort.readBytesUntil(lf, inBuffer);
   while(true){
-    while (myPort.available() < 28){delay(1);};
+    while (myPort.available() < 28){
+      delay(1);
+    }
     if (DAFlag) {
       inBuffer = myPort.readBytes(29);
       //displaybuffData(inBuffer);
