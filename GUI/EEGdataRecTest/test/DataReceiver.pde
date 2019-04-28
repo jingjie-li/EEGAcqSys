@@ -37,9 +37,7 @@ static class EegReceiverConfig{
 void setup_serial_port()
 {
       EegReceiverConfig.myPort = new Serial(this, Serial.list()[5], 115200); 
-
-      //!!!!!!!!!!!!!!
-      // EegReceiverConfig.myPort.write('B');
+      EegReceiverConfig.myPort.write('B');
 
 }
 
@@ -58,7 +56,7 @@ while(true){
             delay(1);
           }
       if (DAFlag) {
-          
+          print(10);
           inBuffer[25]=0;inBuffer[26]=0;inBuffer[27]=0;inBuffer[28]=0;
           //myPort.readBytesUntil(lf, inBuffer); // until 0x0A
           inBuffer = EegReceiverConfig.myPort.readBytes(29);
@@ -74,8 +72,8 @@ while(true){
           EegReceiverConfig.points_count++;
           if (EegReceiverConfig.points_count > (EegReceiverConfig.nPointsPerUpdate - 1)){
               for(int i = 0; i < EegReceiverConfig.nchan; i++){
-              append_Shift(EegReceiverConfig.eeg_data_buff_copy[i], EegReceiverConfig.update_data_eeg_buff[i]);
-              // EegReceiverConfig.eeg_data_buff_copy[i] = EegReceiverConfig.eeg_data_buff[i].clone();
+              append_Shift(EegReceiverConfig.eeg_data_buff[i], EegReceiverConfig.update_data_eeg_buff[i]);
+              EegReceiverConfig.eeg_data_buff_copy[i] = EegReceiverConfig.eeg_data_buff[i].clone();
               }
 
               EegReceiverConfig.points_count = 0;
@@ -148,6 +146,7 @@ float[] data_transform(byte[] data_packet){
   int[] eeg_datas = new int[8];
   float[]  eeg_datas_read = new float[8];
   int meta_data = 0;
+
   if ((int(data_packet[0])==192))// && ((int)(data_packet[27])) == 13 && ((int)(data_packet[28]))== 10)
   {
         //print(hex(data_packet[0])+" ");
@@ -169,7 +168,7 @@ float[] data_transform(byte[] data_packet){
           }
           
           eeg_datas_read[ss]=(float(eeg_datas[ss])*4.5*2/16)/(2^24);;
-          // print("EEGData"+ss+": "+(eeg_datas_read[ss])+" ");
+           print("EEGData"+ss+": "+(eeg_datas_read[ss])+" ");
         }
           if(EegReceiverConfig.offset_posi < 500){
             for(int i = 0; i < EegReceiverConfig.nchan; i++)

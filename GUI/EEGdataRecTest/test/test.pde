@@ -2,7 +2,7 @@ import controlP5.*;
 import java.util.*;
 import g4p_controls.*; 
 
-boolean test_mode = true;
+boolean test_mode = false;
 
 ControlP5 cp5;
 ControlP5 cp5_2;
@@ -61,8 +61,9 @@ void setup(){
   initiate_timesieres_subwindow(this, cp5);
   // lines = loadStrings("Users/liusitan/Downloads/ADS1299TEST(1).txt");
   if(!test_mode){
+    setup_serial_port();
     thread("read_data_thread");
-      setup_serial_port();
+      
   }
   //thread("channel_bar_udpate");
 

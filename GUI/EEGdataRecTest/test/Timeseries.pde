@@ -313,7 +313,6 @@ void update(){
 
         case 0: 
                 source_connected = true;
-                println(int(TimeSeriesConfig.window_length_list[int(TimeSeriesConfig.window_length_control.getValue())]/1000));
                 filt_uV_value = random(int(TimeSeriesConfig.vert_scale_list[0]));// keep random scale constant, so you can tell the difference between difference vert scale
                 
                 break;

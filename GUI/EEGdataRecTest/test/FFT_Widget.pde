@@ -1,4 +1,5 @@
-//  FFT[] fftBuff = new FFT[nchan];    //from the minim library
+// import ddf.minim.*;
+// import ddf.minim.analysis.*;
 //  boolean isFFTFiltered = true; //yes by default ... this is used in dataProcessing.pde to determine which uV array feeds the FFT calculation
 
 //  static class FFTConfig{
@@ -6,6 +7,7 @@
 
 //    //put your custom variables here...
 //    static GPlot fft_plot; //create an fft plot for each active channel
+//    static FFT[] fftBuff;    //from the minim library
 //    static GPointsArray[] fft_points;  //create an array of points for each channel of data (4, 8, or 16)
 //    static int[] lineColor;
 
@@ -25,6 +27,8 @@
 //    static ScrollableList log_lin_list;
 //    static ScrollableList smoothing_list;
 //    static ScrollableList fft_filter_list;
+//    float fs_Hz;
+//    int nfft;
 
 //  }
 //  void initializeFFTConfig(){
@@ -45,9 +49,15 @@
 //      (int)color(162, 82, 49)
 //    };
 //      FFTConfig.lineColor = lineColor;
-//      FFTConfig.FFT_indexLim = int(1.0*xMax*(getNfftSafe()/getSampleRateSafe()));
+//      FFTConfig.FFT_indexLim = int(1.0*xMax*(getNfftSafe()/EegReceiverConfig.getSampleRateSafe()));
 //      FFTConfig.fft_points = new GPointsArray[num_chan];
 //      FFTConfig.fft_plot =  new GPlot(_parent, x, y-navHeight, w, h+navHeight);
+//      FFTConfig.fftBuff = new FFT[nchan];
+//      FFTConfig.sr = EegReceiverConfig.getSampleRateSafe();
+//      FFTConfig.nfft = getNfftSafe(sr);
+//      for(int i = 0; i < num_chan; i++){
+//         FFTConfig.fftBuff[i] = FFT(FFTConfig.nfft, FFTConfig.fs_Hz);
+//    }
 //  }
 
 //  void initialize_FFT_plot(PApplet _parent,ControlP5 cp5){
@@ -63,7 +73,7 @@
 //      //This is the protocol for setting up dropdowns.
 //      //Note that these 3 dropdowns correspond to the 3 global functions below
 //      //You just need to make sure the "id" (the 1st String) has the same name as the corresponding function
-//      initializeFFTConfig()
+//      initializeFFTConfig();
 //      pushStyle();
 //      textMode(CENTER);
 //      text("MaxFreq",78 - control_panel_pos_x, 522- control_panel_pos_y);
@@ -133,28 +143,25 @@
 
 //      //setup points of fft point arrays
 //      for (int i = 0; i < fft_points.length; i++) {
-//        FFTConfig.fft_points[i] = new GPointsArray(FFT_indexLim);
+//        FFTConfig.fft_points[i] = new GPointsArray(FFTConfig.FFT_indexLim);
 //      }
 
 //      //fill fft point arrays
 //      for (int i = 0; i < fft_points.length; i++) { //loop through each channel
-//        for (int j = 0; j < FFT_indexLim; j++) {
+//        for (int j = 0; j < FFTConfig.FFT_indexLim; j++) {
 //          //GPoint temp = new GPoint(i, 15*noise(0.1*i));
 //          //println(i + " " + j);
 //          GPoint temp = new GPoint(j, 0);
 //          FFTConfig.fft_points[i].set(j, temp);
 //        }
 //      }
-
 //      //map fft point arrays to fft plots
-//      FFTConfig.fft_plot.setPoints(fft_points[0]);
 //    }
 
 //  void update(){
 
 //    super.update(); //calls the parent update() method of Widget (DON'T REMOVE)
-//    float sr = EegReceiverConfig.getSampleRateSafe();
-//    int nfft = getNfftSafe(sr);
+
 
 //    //put your code here...
 //    //update the points of the FFT channel arrays
@@ -163,7 +170,7 @@
 //    // println("LENGTH = " + fftBuff.length);
 //    // println("LENGTH = " + FFT_indexLim);
 //    for (int i = 0; i < fft_points.length; i++) {
-//      for (int j = 0; j < FFT_indexLim + 2; j++) {  //loop through frequency domain data, and store into points array
+//      for (int j = 0; j < FFTConfig.FFT_indexLim + 2; j++) {  //loop through frequency domain data, and store into points array
 //        //GPoint powerAtBin = new GPoint(j, 15*random(0.1*j));
 //        GPoint powerAtBin;
 
@@ -174,8 +181,8 @@
 //        // float c = Nfft;
 
 //        //println("Sample rate: "+ sr + " -- Nfft: " + nfft);
-//        powerAtBin = new GPoint((1.0*sr/nfft)*j, fftBuff[i].getBand(j));
-//        fft_points[i].set(j, powerAtBin);
+//        powerAtBin = new GPoint((1.0* FFTConfig.fs_Hz/ FFTConfig.nfft)*j, FFTConfig.fftBuff[i].getBand(j));
+//        FFTConfig.fft_points[i].set(j, powerAtBin);
 //        // GPoint powerAtBin = new GPoint((1.0*getSampleRateSafe()/Nfft)*j, fftBuff[i].getBand(j));
 
 //        //println("=========================================");
@@ -186,7 +193,7 @@
 //    }
 
 //    //remap fft point arrays to fft plots
-//    fft_plot.setPoints(fft_points[0]);
+
 
 //  }
 
@@ -197,35 +204,35 @@
 
 //    //draw FFT Graph w/ all plots
 //    noStroke();
-//    fft_plot.beginDraw();
-//    fft_plot.drawBackground();
-//    fft_plot.drawBox();
-//    fft_plot.drawXAxis();
-//    fft_plot.drawYAxis();
+//    FFTConfig.fft_plot.beginDraw();
+//    FFTConfig.fft_plot.drawBackground();
+//    FFTConfig.fft_plot.drawBox();
+//    FFTConfig.fft_plot.drawXAxis();
+//    FFTConfig.fft_plot.drawYAxis();
 //    //fft_plot.drawTopAxis();
 //    //fft_plot.drawRightAxis();
 //    //fft_plot.drawTitle();
-//    fft_plot.drawGridLines(2);
+//    FFTConfig.fft_plot.drawGridLines(2);
 //    //here is where we will update points & loop...
 //    for (int i = 0; i < fft_points.length; i++) {
-//      fft_plot.setLineColor(lineColor[i]);
-//      fft_plot.setPoints(fft_points[i]);
-//      fft_plot.drawLines();
+//      FFTConfig.fft_plot.setLineColor(lineColor[i]);
+//      FFTConfig.fft_plot.setPoints(fft_points[i]);
+//      FFTConfig.fft_plot.drawLines();
 //      // fft_plot.drawPoints(); //draw points
 //    }
-//    fft_plot.endDraw();
+//    FFTConfig.fft_plot.endDraw();
 
 //    //for this widget need to redraw the grey bar, bc the FFT plot covers it up...
-//    fill(200, 200, 200);
-//    rect(x, y - navHeight, w, navHeight); //button bar
+//    // fill(200, 200, 200);
+//    // rect(x, y - navHeight, w, navHeight); //button bar
 
 //    popStyle();
 
 //  }
 
-//  int getNfftSafe(   int sampleRate
-// ) {
-//    switch (sampleRate) {
+//  int getNfftSafe(int sampleRate)
+//  {
+//    switch(sampleRate) {
 //      case 1000:
 //        return 1024;
 //      case 1600:
@@ -238,21 +245,21 @@
 //    }
 //  }
 
-//  void initializeFFTObjects(FFT[] fftBuff, float[][] dataBuffY_uV, int Nfft, float fs_Hz) {
+//  void FFT_update( float[][] dataBuffY_uV, int Nfft, float fs_Hz) {
 
 //    float[] fooData;
 //    for (int Ichan=0; Ichan < nchan; Ichan++) {
 //      //make the FFT objects...Following "SoundSpectrum" example that came with the Minim library
-//      //fftBuff[Ichan] = new FFT(Nfft, fs_Hz);  //I can't have this here...it must be in setup
-//      fftBuff[Ichan].window(FFT.HAMMING);
+//      FFTConfig.fftBuff[Ichan] = new FFT(Nfft, fs_Hz);  //I can't have this here...it must be in setup
+//      FFTConfig.fftBuff[Ichan].window(FFT.HAMMING);
 
 //      //do the FFT on the initial data
 //      if (isFFTFiltered == true) {
-//        fooData =  dataBuffY_uV[Ichan];  //use the filtered data for the FFT
+//        fooData = EegReceiverConfig.eeg_data_buff_copy[Ichan];  //use the filtered data for the FFT
 //      } else {
-//        fooData = dataBuffY_uV[Ichan];  //use the raw data for the FFT
+//        fooData = EegReceiverConfig.eeg_data_buff_copy[Ichan];  //use the raw data for the FFT
 //      }
 //      fooData = Arrays.copyOfRange(fooData, fooData.length-Nfft, fooData.length);
-//      fftBuff[Ichan].forward(fooData); //compute FFT on this channel of data
+//     FFTConfig.fftBuff[Ichan].forward(fooData); //compute FFT on this channel of data
 //    }
 //  }
