@@ -2,53 +2,7 @@
 import processing.serial.*;
 int lf=10;
 
-//class ComputeBaseline {
-//  int datapointer;
-//  float datasum;
-//  float[] baselinedatas = new float[100];
-//  float meansumval=0;
-//  float baselineval=200;
-//  float prevdata=0;
-//  ComputeBaseline (){
-//    datapointer=0;
-//    datasum=0;
-//  }
-//  boolean isabnormal(float data){
-//    //return (abs(data-prevdata)>600&&prevdata!=0);
-//    return (abs(data-prevdata)>60000&&prevdata!=0);
-//  }
-//  boolean isabnormalin(float data){
-//    //return (abs(data-prevdata)>200&&prevdata!=0);
-//    return (abs(data-prevdata)>200000&&prevdata!=0);
-//  }
-//  void addEEGData(float data){
-//    if(datapointer>99){
-//      datapointer=0;
-//    }
-//    if(isabnormalin(data)){// delete abnomal val
-//      //data=prevdata;
-//    }
-//    baselinedatas[datapointer]=data;
-//    datapointer++;
-//    datasum++;
-//    prevdata=data;
-//  }
-//  float compute(float factor, float base){
-//    if(datasum>100){
-//      meansumval=0;
-//      for(int i=0;i<100;i++){
-//        meansumval+=baselinedatas[i];
-//      }
-//      if(abs(baselineval-((meansumval/100)*factor+base))>200){
-//        baselineval=(meansumval/100)*factor+base; //update baseline only while too large
-//      }
-//      return baselineval;
-//    }
-//    else{
-//      return 200;
-//    }
-//  }
-//}
+
 
 
 Serial myPort;    // The serial port
@@ -83,7 +37,9 @@ static class EegReceiverConfig{
 void setup_serial_port()
 {
       EegReceiverConfig.myPort = new Serial(this, Serial.list()[5], 115200); 
-      EegReceiverConfig.myPort.write('B');
+
+      //!!!!!!!!!!!!!!
+      // EegReceiverConfig.myPort.write('B');
 
 }
 
@@ -91,12 +47,14 @@ void setup_serial_port()
 
 void read_data_thread(){
   
-  EegReceiverConfig.myPort.clear();  
+    EegReceiverConfig.myPort.clear();  
   //EegReceiverConfig.myPort.readBytesUntil(lf, inBuffer);
-
 while(true){  
-  
-    while (EegReceiverConfig.myPort.available() < 30){
+           
+
+    while (EegReceiverConfig.myPort.available() < 29){
+
+    
             delay(1);
           }
       if (DAFlag) {
@@ -106,31 +64,33 @@ while(true){
           inBuffer = EegReceiverConfig.myPort.readBytes(29);
           //displaybuffData(inBufferWaste);
           float[] temp = data_transform(inBuffer);
-          printArray(temp);
+
           for(int i = 0; i < EegReceiverConfig.nchan; i++){
            
             EegReceiverConfig.update_data_eeg_buff[i][EegReceiverConfig.points_count] = temp[i];
           }
-          
           //println(EegReceiverConfig.update_data_eeg_buff[1]);
           //println(EegReceiverConfig.eeg_data_buff[1]);
           EegReceiverConfig.points_count++;
           if (EegReceiverConfig.points_count > (EegReceiverConfig.nPointsPerUpdate - 1)){
               for(int i = 0; i < EegReceiverConfig.nchan; i++){
-              append_Shift(EegReceiverConfig.eeg_data_buff[i], EegReceiverConfig.update_data_eeg_buff[i]);
-              EegReceiverConfig.eeg_data_buff_copy[i] = EegReceiverConfig.eeg_data_buff[i].clone();
-            }
+              append_Shift(EegReceiverConfig.eeg_data_buff_copy[i], EegReceiverConfig.update_data_eeg_buff[i]);
+              // EegReceiverConfig.eeg_data_buff_copy[i] = EegReceiverConfig.eeg_data_buff[i].clone();
+              }
+
               EegReceiverConfig.points_count = 0;
-
-          }
+              // println(EegReceiverConfig.eeg_data_buff_copy[0][EegReceiverConfig.eeg_data_buff_copy[0].length - 1]);
+              
+            }
           
-
-          delay(1);
+          source_connected = true;
+          delay(2);
         }
         else{//DAFlag=0
             EegReceiverConfig.myPort.readBytesUntil(lf, inBufferWaste);
             if(ifexist0D0A(inBufferWaste)){
               DAFlag=true;
+             
             }
             delay(1);
       }
@@ -159,6 +119,7 @@ boolean ifexist0D0A(byte[] inBufferWaste){
 }
 
 void append_Shift(float[] data, float[] newData) {
+
       while(true){
         int nshift = newData.length;
         int end = data.length-nshift;
@@ -175,21 +136,7 @@ void append_Shift(float[] data, float[] newData) {
 }
 
 
-//void updateDataEEG(float eeg_data[]){
-//  for(int i = 0; i < EegReceiverConfig.nchan; i++)
 
-//  //if(EEG1_baseline.isabnormal(EEGdata)){
-//    //EEGdata=EEG1_baseline.prevdata;
-//  //}
-//  a=0.01;
-//  //b=1800; 
-//  //b=EEG1_baseline.compute(a,200);
-//  b=-900; 
-//  println("baseline: "+b);
-//  displayEEGdata[pointerEEG]=abs((-a*(float(EEGdata))+b));//resize 0x1FFFFF
-//  println("baseline computed: "+displayEEGdata[pointerEEG]);
-//  pointerEEG++;
-//}
 
 int size_STAT_Byte = 1; 
 int size_Channel_Byte = 3; 
@@ -221,21 +168,22 @@ float[] data_transform(byte[] data_packet){
             eeg_datas[ss]=-(((~eeg_datas[ss])&0x7fffff)+1);
           }
           
-          eeg_datas_read[ss]=float(eeg_datas[ss])*2.5*1000*16/(2^24);
-          //print("EEGData"+ss+": "+(eeg_datas_read[ss])+" ");
+          eeg_datas_read[ss]=(float(eeg_datas[ss])*4.5*2/16)/(2^24);;
+          // print("EEGData"+ss+": "+(eeg_datas_read[ss])+" ");
         }
-        
           if(EegReceiverConfig.offset_posi < 500){
             for(int i = 0; i < EegReceiverConfig.nchan; i++)
             {
-              EegReceiverConfig.channel_baseline[i] += eeg_datas_read[i];
-              EegReceiverConfig.offset_posi++; 
+              EegReceiverConfig.channel_baseline[i] +=  eeg_datas_read[i]/500;
             }
+            EegReceiverConfig.offset_posi++;
+            
           }
           else{
+
             for(int i = 0; i < EegReceiverConfig.nchan; i++){
                       eeg_datas_read[i] -= EegReceiverConfig.channel_baseline[i];
-                      //print("EEGData"+i+": "+(eeg_datas_read[i])+" ");       
+                      
             }
             
             if(EegReceiverConfig.entering_ploting==false){

@@ -3,6 +3,7 @@ import grafica.*;
 import controlP5.*;
 
 
+
 static class TimeSeriesConfig {
 	public static int num_data_channel;
 	public static GPlot plot;
@@ -27,7 +28,54 @@ static class TimeSeriesConfig {
   public static ScrollableList vert_scale_control;
   public static ScrollableList window_length_control;
 
+}
 
+class ComputeBaseline {
+  int datapointer;
+  float datasum;
+  float[] baselinedatas = new float[100];
+  float meansumval=0;
+  float baselineval=200;
+  float prevdata=0;
+  ComputeBaseline (){
+    datapointer=0;
+    datasum=0;
+  }
+  boolean isabnormal(float data){
+    //return (abs(data-prevdata)>600&&prevdata!=0);
+    return (abs(data-prevdata)>60000&&prevdata!=0);
+  }
+  boolean isabnormalin(float data){
+    //return (abs(data-prevdata)>200&&prevdata!=0);
+    return (abs(data-prevdata)>200000&&prevdata!=0);
+  }
+  void addEEGData(float data){
+    if(datapointer>99){
+      datapointer=0;
+    }
+    if(isabnormalin(data)){// delete abnomal val
+      //data=prevdata;
+    }
+    baselinedatas[datapointer]=data;
+    datapointer++;
+    datasum++;
+    prevdata=data;
+  }
+  float compute(float factor, float base){
+    if(datasum>100){
+      meansumval=0;
+      for(int i=0;i<100;i++){
+        meansumval+=baselinedatas[i];
+      }
+      if(abs(baselineval-((meansumval/100)*factor+base))>200){
+        baselineval=(meansumval/100)*factor+base; //update baseline only while too large
+      }
+      return baselineval;
+    }
+    else{
+      return 200;
+    }
+  }
 }
 
 void channel_bar_udpate(){
@@ -36,7 +84,7 @@ void channel_bar_udpate(){
         
         TimeSeriesConfig.channel_vis[i].update();
         }
-    //delay(EegReceiverConfig.UPDATE_MILLIS - 10);
+    delay(EegReceiverConfig.UPDATE_MILLIS - 10);
     //delay(1000);
   }
 }
@@ -199,7 +247,7 @@ void update(){
 
     //update the voltage value text string
     String text_format; 
-    float val;
+    float val; //<>//
 
     //update the voltage values
     //val = TimeSeriesConfigProcessing.TimeSeriesConfig_std_uV[channel_number-1]
@@ -252,20 +300,45 @@ void update(){
     //GPointsArray channelPoints =  new GPointsArray(nPoints);
     nPoints = EegReceiverConfig.getSampleRateSafe() * (int)(TimeSeriesConfig.window_length_list[TimeSeriesConfig.window_length]/1000);// false
     TimeSeriesConfig.num_seconds = TimeSeriesConfig.window_length_list[int(TimeSeriesConfig.window_length_control.getValue())];
-    int time_ = millis();
     for (int i = 0; i < nPoints; i++) 
     //for (int i = 0 ;i < nPoints; i++)  
     {          
       
         float time = -(float)TimeSeriesConfig.num_seconds + (float)(i)*timeBetweenPoints;
+        float filt_uV_value;
        //  //float time = -(float)num_seconds + (float)(i)*timeBetweenPoints;
        // //float time = -(float)TimeSeriesConfig.num_seconds + (float)i*timeBetweenPoints;
+       switch(int(choose_data_source.getValue()))
+       {
 
-       //  //float filt_uV_value = EegReceiverConfig.eeg_data_buff_copy[channel_number - 1][i];
-        float filt_uV_value = random(10);
+        case 0: 
+                source_connected = true;
+                println(int(TimeSeriesConfig.window_length_list[int(TimeSeriesConfig.window_length_control.getValue())]/1000));
+                filt_uV_value = random(int(TimeSeriesConfig.vert_scale_list[0]));// keep random scale constant, so you can tell the difference between difference vert scale
+                
+                break;
+
+        case 1:
+                filt_uV_value = EegReceiverConfig.eeg_data_buff_copy[channel_number - 1][i + EegReceiverConfig.eeg_data_buff_copy[channel_number-1].length - nPoints];
+                eeGDisplayCalibration[channel_number-1].addEEGData(filt_uV_value);
+                float baseline = eeGDisplayCalibration[channel_number-1].compute(1,200);
+                filt_uV_value = abs((-(filt_uV_value)+baseline));//resize 0x1FFFFF
+
+                break;
         
-        GPoint tempPoint = new GPoint(time, filt_uV_value);//filt_uV_value);
-        channelPoints.set(i, tempPoint);
+        default:
+                filt_uV_value=0;
+                println("wrong_resources");
+
+       }
+      //if( channel_number == 4){
+      //        print("un_filtered_valie:");
+      //        println(filt_uV_value);
+      //        print("baseline:");
+      //        println(EegReceiverConfig.channel_baseline[6]);
+      //}
+      GPoint tempPoint = new GPoint(time, filt_uV_value);//filt_uV_value);
+      channelPoints.set(i, tempPoint);
     }
     
     
@@ -273,14 +346,11 @@ void update(){
      //reset the plot with updated channelPoints
     
   
-  println(millis() - time_);
   plot.setPoints(channelPoints);
   }
 
   void draw_(){
     pushStyle();
-    
-     //plot.setPoints(channelPoints);
     //draw channel holder background
     stroke(31,69,110, 50);
     fill(255);
@@ -295,6 +365,7 @@ void update(){
     plot.beginDraw();
     //plot.drawBox(); // we won't draw this eventually ...
     plot.setXLim(-TimeSeriesConfig.num_seconds,0);
+     plot.setYLim(-TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())],TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())]);
     plot.drawGridLines(0);
     plot.drawLines();
     
@@ -311,21 +382,17 @@ void update(){
     //  voltageValue.draw();
     //}
     // update_data_buff(data_buff);
-
-    // update();
-    // updatePlotPoints();
-    // if(data_buff.length >= nPoints){
-    //   for (int i = data_buff.length - nPoints; i < data_buff.length; i++) {
-    //     float time = -(float)num_seconds + (float)(i-(data_buff.length-nPoints))*timeBetweenPoints;
-    //     float filt_uV_value = data_buff[i];
-    //     // float filt_uV_value = 0.0;
-    //     GPoint tempPoint = new GPoint(time, filt_uV_value);
-    //     channelPoints.set(i-(data_buff.length-nPoints), tempPoint);
-    //   }
-    //   plot.setPoints(channelPoints); //reset the plot with updated channelPoints
-    // }
     popStyle();
   }
+
+
+
+  
+  
+
+
+
+
   public GPointsArray get_channelPoints()
   {
     return channelPoints;
@@ -339,6 +406,10 @@ void update(){
   // }
 
 }
+
+
+
+
 class TextBox {
   public int x, y;
   public color textColor;
@@ -401,7 +472,7 @@ class TextBox {
     strokeWeight(1);
   }
 };
-
+public ComputeBaseline[] eeGDisplayCalibration;
 void initiate_timesieres_subwindow(PApplet p, ControlP5 cp5 ){
   
   print("initiate timeseries window");
@@ -445,7 +516,11 @@ void initiate_timesieres_subwindow(PApplet p, ControlP5 cp5 ){
   for (int i  = 0; i < TimeSeriesConfig.num_data_channel; i++)
     for (int j = 0; j < TimeSeriesConfig.buff_length; j ++)
       TimeSeriesConfig.timeseries_buff[i][j] = random(10);
-
+  eeGDisplayCalibration = new ComputeBaseline[8];
+  for (int i =0; i < 8;i++)
+  {
+    eeGDisplayCalibration[i] = new ComputeBaseline();
+  }
   intialize_channel_bars(p);
 
 
@@ -454,6 +529,7 @@ void initiate_timesieres_subwindow(PApplet p, ControlP5 cp5 ){
 
 
 void intialize_channel_bars(PApplet p){
+  
   for (int i = 0; i < TimeSeriesConfig.num_data_channel; i++){
     TimeSeriesConfig.channel_vis[i] = new ChannelBar(p, i+1);
 }

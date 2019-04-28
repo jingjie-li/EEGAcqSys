@@ -15,8 +15,11 @@ boolean system_start = false;
 class start_button_ControlListener implements ControlListener{
   public void controlEvent(ControlEvent theEvent){
     system_start = !system_start;
-    pause_calibration_phase = !pause_calibration_phase;
-    
+    //if（theEvent.getValue())
+    //{
+    //  ;
+    //}
+
   }
 }
 
@@ -26,9 +29,6 @@ class choose_system_mode_ControlListener implements ControlListener {
   	System_Mode_Index = int(theEvent.getValue());
     println("i got an event from choose_system_mode");
     println(System_Mode_Index);
-    if (System_Mode_Index == BEHAVIORAL_TRAINING){
-      win = new PWindow();
-    }
   }
 }
 
