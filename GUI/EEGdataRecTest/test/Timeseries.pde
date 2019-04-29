@@ -27,6 +27,7 @@ static class TimeSeriesConfig {
 	public static int num_seconds;
   public static ScrollableList vert_scale_control;
   public static ScrollableList window_length_control;
+  public float display_ratio_compute_baseline = 1;
 
 }
 
@@ -320,8 +321,10 @@ void update(){
         case 1:
                 filt_uV_value = EegReceiverConfig.eeg_data_buff_copy[channel_number - 1][i + EegReceiverConfig.eeg_data_buff_copy[channel_number-1].length - nPoints];
                 eeGDisplayCalibration[channel_number-1].addEEGData(filt_uV_value);
-                float baseline = eeGDisplayCalibration[channel_number-1].compute(1,200);
+                float baseline = eeGDisplayCalibration[channel_number-1].compute(TimeSeriesConfig.display_ratio_compute_baseline,200);
                 filt_uV_value = abs((-(filt_uV_value)+baseline));//resize 0x1FFFFF
+                
+                // filt_uV_value = LowPassFilter[i].runfilter(NotchFilter[i].runfilter(filt_uV_value));
 
                 break;
         
@@ -364,7 +367,8 @@ void update(){
     plot.beginDraw();
     //plot.drawBox(); // we won't draw this eventually ...
     plot.setXLim(-TimeSeriesConfig.num_seconds,0);
-     plot.setYLim(-TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())],TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())]);
+    plot.setYLim(-TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())],TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())]);
+    // plot.setYLim(0.0,40000.0);
     plot.drawGridLines(0);
     plot.drawLines();
     

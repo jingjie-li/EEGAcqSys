@@ -3,7 +3,10 @@ import java.util.*;
 import g4p_controls.*; 
 
 boolean test_software_mode = false;
-boolean test_hardware_mode = false;
+boolean test_hardware_mode = true;
+boolean write_to_file = false;
+
+
 ControlP5 cp5;
 ControlP5 cp5_2;
 
@@ -114,7 +117,7 @@ void draw(){
 
 
   }
-          FFT_update();
+        FFT_update();
         FFT_draw();
   
   cp5_2.draw();

@@ -140,7 +140,7 @@ void setup() {
   frameRate(30);
   size(1000, 800);
   printArray(Serial.list());
-  myPort = new Serial(this, Serial.list()[2], 115200); 
+  myPort = new Serial(this, Serial.list()[5], 115200); 
   myPort.write('B');
   //inBufferWaste = myPort.readBytes(30);
   //myPort.clear();
@@ -161,7 +161,7 @@ void displaybuffData(byte[] inBuffer){
 }
 void readDataThread(){
   myPort.clear();
-  //myPort.readBytesUntil(lf, inBuffer);
+  myPort.readBytesUntil(lf, inBuffer);
   while(true){
     while (myPort.available() < 28){
       delay(1);
@@ -181,14 +181,16 @@ void readDataThread(){
           }
           //EEGdatas[6]=EEGdatas[6]-mean(float(offsetRcv));
           EEGdatasRead[ss]=(float(EEGdatas[ss])*4.5*2/16)/(2^24);//in mV
-          //print("EEGData"+ss+": "+(EEGdatas[ss])+" ");
-          print("EEGDataFloat"+ss+": "+(EEGdatasRead[ss])+" ");
+          // print("EEGData"+ss+": "+(EEGdatas[ss])+" ");
+          // print("EEGDataFloat"+ss+": "+(EEGdatasRead[ss])+" ");
         }
-        println("EEGDataFloat6: "+EEGdatasRead[6]+"Offset: "+offsetSum/500);
+         // println("EEGDataFloat6: "+EEGdatasRead[6]+"Offset: "+offsetSum/500);
+
         if(OffsetPosi<500){
           offsetSum+=EEGdatasRead[6];
           OffsetPosi++;
         }else{
+          println(offsetSum/500);
           if(EnteringPloting==false){
             delay(50);
             myPort.write('S');
@@ -245,7 +247,7 @@ void updateDataEEG(float EEGdata){
   //b=1800; 
   b=EEG1_baseline.compute(a,200);
   //b=-900; 
-  println("baseline: "+b);
+  // println("baseline: "+b);
   displayEEGdata[pointerEEG]=abs((-a*(EEGdata)+b));//resize 0x1FFFFF
   println("Data to Display Converted: "+displayEEGdata[pointerEEG]);
   pointerEEG++;
