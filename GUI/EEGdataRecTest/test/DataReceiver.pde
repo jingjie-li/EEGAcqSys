@@ -42,9 +42,10 @@ void setup_serial_port()
 }
 
 
-
-void read_data_thread(){
   
+PrintWriter output;
+void read_data_thread(){
+    output = createWriter("positions.txt"); 
     EegReceiverConfig.myPort.clear();  
   //EegReceiverConfig.myPort.readBytesUntil(lf, inBuffer);
 while(true){  
@@ -62,7 +63,7 @@ while(true){
           inBuffer = EegReceiverConfig.myPort.readBytes(29);
           //displaybuffData(inBufferWaste);
           float[] temp = data_transform(inBuffer);
-
+          output.println(temp[7]); 
           for(int i = 0; i < EegReceiverConfig.nchan; i++){
            
             EegReceiverConfig.update_data_eeg_buff[i][EegReceiverConfig.points_count] = temp[i];
@@ -75,7 +76,7 @@ while(true){
               append_Shift(EegReceiverConfig.eeg_data_buff[i], EegReceiverConfig.update_data_eeg_buff[i]);
               EegReceiverConfig.eeg_data_buff_copy[i] = EegReceiverConfig.eeg_data_buff[i].clone();
               }
-
+              
               EegReceiverConfig.points_count = 0;
               // println(EegReceiverConfig.eeg_data_buff_copy[0][EegReceiverConfig.eeg_data_buff_copy[0].length - 1]);
               
@@ -189,7 +190,8 @@ float[] data_transform(byte[] data_packet){
 
                 for(int i = 0; i < EegReceiverConfig.nchan; i++) EegReceiverConfig.channel_baseline[i] = - EegReceiverConfig.channel_baseline[i];
                 delay(50);
-                EegReceiverConfig.myPort.write('P');
+                if(test_hardware_mode)EegReceiverConfig.myPort.write('T');
+                else EegReceiverConfig.myPort.write('S');
                 EegReceiverConfig.entering_ploting=true;
               
             }

@@ -2,8 +2,8 @@ import controlP5.*;
 import java.util.*;
 import g4p_controls.*; 
 
-boolean test_mode = false;
-
+boolean test_software_mode = false;
+boolean test_hardware_mode = false;
 ControlP5 cp5;
 ControlP5 cp5_2;
 
@@ -59,8 +59,9 @@ void setup(){
  
   initiate_control_panel();
   initiate_timesieres_subwindow(this, cp5);
+  initialize_FFT_plot(this);
   // lines = loadStrings("Users/liusitan/Downloads/ADS1299TEST(1).txt");
-  if(!test_mode){
+  if(!test_software_mode){
     setup_serial_port();
     thread("read_data_thread");
       
@@ -69,11 +70,7 @@ void setup(){
 
 
 }
-String[] lines; //<>//
-void write_date()
-{
 
-}
 
 void draw(){
   
@@ -114,10 +111,11 @@ void draw(){
     TimeSeriesConfig.channel_vis[i].update();
     TimeSeriesConfig.channel_vis[i].draw_();
         }
-  
+
 
   }
-
+          FFT_update();
+        FFT_draw();
   
   cp5_2.draw();
   cp5.draw();
@@ -184,6 +182,14 @@ void create_timeseries_window(){
 
 }
 
+void keyTyped() {
+    if (key == 'x' ) {
+     
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  exit(); // Stops the program
+}
+}
 void create_FFT_window(){
   println("FFT_window created");
 }
