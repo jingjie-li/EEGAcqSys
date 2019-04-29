@@ -32,6 +32,7 @@ ComputeBaseline PPG2_baseline = new ComputeBaseline();
 ComputeBaseline EEG1_baseline = new ComputeBaseline();
 IIRNotch NotchFilter = new IIRNotch();
 LowPass LowPassFilter = new LowPass();
+HighPass HighPassFilter = new HighPass();
 
 float x_old = 1;
 float y_old = 100;
@@ -87,6 +88,22 @@ class LowPass {
   }
 }
 
+
+class HighPass {
+  float[] w0={0,0,0};
+  float[] HP_A={1,-1.822694925196308,0.837181651256023};
+  float[] HP_B={0.914969144113083,-1.829938288226165,0.914969144113083};
+  float y0=0;
+  HighPass(){
+  }
+  float runfilter(float convertval){
+    w0[0]=HP_A[0]*convertval-HP_A[1]*w0[1]-HP_A[2]*w0[2];
+    y0=HP_B[0]*w0[0]+HP_B[1]*w0[1]+HP_B[2]*w0[2];
+    w0[2]=w0[1];
+    w0[1]=w0[0];
+    return y0;
+  }
+}
 
 class ComputeBaseline {
   int datapointer;
@@ -163,9 +180,17 @@ void readDataThread(){
   myPort.clear();
   myPort.readBytesUntil(lf, inBuffer);
   while(true){
-    while (myPort.available() < 28){
-      delay(1);
+    //int time = millis();
+    //println("Bef port available: "+myPort.available());
+    if (myPort.available() > 200){
+      myPort.clear();
+      DAFlag=false;
     }
+    while (myPort.available() < 29){
+      delay(1);
+      //println("Waiting for UART Port");
+    }
+    //println("Aft port available: "+myPort.available());
     if (DAFlag) {
       inBuffer = myPort.readBytes(29);
       //displaybuffData(inBuffer);
@@ -192,7 +217,7 @@ void readDataThread(){
         }else{
           println(offsetSum/500);
           if(EnteringPloting==false){
-            delay(50);
+            delay(10);
             myPort.write('S');
             EnteringPloting=true;
           }
@@ -200,7 +225,7 @@ void readDataThread(){
           //updateDataEEG(EEGdatasRead[6]);
           updateDataEEG(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[6])));
         }
-        delay(2);
+        delay(1);
       }
     }else{//DAFlag=0
         myPort.readBytesUntil(lf, inBufferWaste);
@@ -209,7 +234,8 @@ void readDataThread(){
         }
         delay(1);
     }
-    delay(2);
+    delay(1);
+    //println(millis() -time);
   }
 }
 
