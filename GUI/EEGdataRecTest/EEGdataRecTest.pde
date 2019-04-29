@@ -180,9 +180,17 @@ void readDataThread(){
   myPort.clear();
   //myPort.readBytesUntil(lf, inBuffer);
   while(true){
-    while (myPort.available() < 28){
-      delay(1);
+    //int time = millis();
+    //println("Bef port available: "+myPort.available());
+    if (myPort.available() > 200){
+      myPort.clear();
+      DAFlag=false;
     }
+    while (myPort.available() < 29){
+      delay(1);
+      //println("Waiting for UART Port");
+    }
+    //println("Aft port available: "+myPort.available());
     if (DAFlag) {
       inBuffer = myPort.readBytes(29);
       //displaybuffData(inBuffer);
@@ -207,15 +215,15 @@ void readDataThread(){
           OffsetPosi++;
         }else{
           if(EnteringPloting==false){
-            delay(50);
+            delay(10);
             myPort.write('S');
             EnteringPloting=true;
           }
           EEGdatasRead[6]-=offsetSum/500;
           //updateDataEEG(EEGdatasRead[6]);
-          updateDataEEG(HighPassFilter.runfilter(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[6]))));
+          updateDataEEG(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[6])));
         }
-        delay(2);
+        delay(1);
       }
     }else{//DAFlag=0
         myPort.readBytesUntil(lf, inBufferWaste);
@@ -224,7 +232,8 @@ void readDataThread(){
         }
         delay(1);
     }
-    delay(2);
+    delay(1);
+    //println(millis() -time);
   }
 }
 
