@@ -30,6 +30,8 @@ ComputeBaseline EEG_baseline = new ComputeBaseline();
 ComputeBaseline PPG1_baseline = new ComputeBaseline();
 ComputeBaseline PPG2_baseline = new ComputeBaseline();
 ComputeBaseline EEG1_baseline = new ComputeBaseline();
+IIRNotch NotchFilter = new IIRNotch();
+LowPass LowPassFilter = new LowPass();
 
 float x_old = 1;
 float y_old = 100;
@@ -193,7 +195,8 @@ void readDataThread(){
             EnteringPloting=true;
           }
           EEGdatasRead[6]-=offsetSum/500;
-          updateDataEEG(EEGdatasRead[6]);
+          //updateDataEEG(EEGdatasRead[6]);
+          updateDataEEG(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[6])));
         }
         delay(2);
       }
