@@ -53,9 +53,12 @@ void read_data_thread(){
   initiate_filter();
   //EegReceiverConfig.myPort.readBytesUntil(lf, inBuffer);
 while(true){  
-           
+   if (EegReceiverConfig.myPort.available() > 200){
+      EegReceiverConfig.myPort.clear();
+      DAFlag=false;
+    }
 
-    while (EegReceiverConfig.myPort.available() < 28){    
+    while (EegReceiverConfig.myPort.available() < 29){    
             delay(1);
           }
       if (DAFlag) {
@@ -82,7 +85,7 @@ while(true){
             }
           
           source_connected = true;
-          delay(2);
+          delay(1);
         }
         else{//DAFlag=0
             EegReceiverConfig.myPort.readBytesUntil(lf, inBufferWaste);
@@ -92,7 +95,7 @@ while(true){
             }
             delay(1);
       }
-    delay(2);
+    delay(1);
   }
 }
 

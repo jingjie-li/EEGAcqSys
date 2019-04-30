@@ -3,7 +3,7 @@ import java.util.*;
 import g4p_controls.*; 
 
 boolean test_software_mode = false;
-boolean test_hardware_mode = true;
+boolean test_hardware_mode = false;
 boolean write_to_file = false;
 
 
