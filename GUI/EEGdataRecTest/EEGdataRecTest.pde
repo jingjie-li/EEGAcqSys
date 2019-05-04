@@ -157,7 +157,7 @@ void setup() {
   frameRate(30);
   size(1000, 800);
   printArray(Serial.list());
-  myPort = new Serial(this, Serial.list()[2], 115200); 
+  myPort = new Serial(this, Serial.list()[5], 115200); 
   myPort.write('B');
   //inBufferWaste = myPort.readBytes(30);
   //myPort.clear();
@@ -178,7 +178,7 @@ void displaybuffData(byte[] inBuffer){
 }
 void readDataThread(){
   myPort.clear();
-  //myPort.readBytesUntil(lf, inBuffer);
+  myPort.readBytesUntil(lf, inBuffer);
   while(true){
     //int time = millis();
     //println("Bef port available: "+myPort.available());
@@ -209,11 +209,13 @@ void readDataThread(){
           print("EEGData"+ss+": "+(hex(EEGdatas[ss]))+" ");
           //print("EEGDataFloat"+ss+": "+(EEGdatasRead[ss])+" ");
         }
-        println("EEGDataFloat6: "+EEGdatasRead[6]+"Offset: "+offsetSum/500);
+         // println("EEGDataFloat6: "+EEGdatasRead[6]+"Offset: "+offsetSum/500);
+
         if(OffsetPosi<500){
           offsetSum+=EEGdatasRead[0];
           OffsetPosi++;
         }else{
+          println(offsetSum/500);
           if(EnteringPloting==false){
             delay(10);
             myPort.write('S');
@@ -271,7 +273,7 @@ void updateDataEEG(float EEGdata){
   //b=1800; 
   b=EEG1_baseline.compute(a,200);
   //b=-900; 
-  println("baseline: "+b);
+  // println("baseline: "+b);
   displayEEGdata[pointerEEG]=abs((-a*(EEGdata)+b));//resize 0x1FFFFF
   println("Data to Display Converted: "+displayEEGdata[pointerEEG]);
   pointerEEG++;

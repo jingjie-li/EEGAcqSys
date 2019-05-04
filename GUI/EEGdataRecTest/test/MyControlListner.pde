@@ -20,6 +20,17 @@ class start_button_ControlListener implements ControlListener{
   }
 }
 
+class OnOffButton_ControlListener implements ControlListener{
+  int corresponding_channel_number;
+  OnOffButton_ControlListener(int _channel_number)
+  {
+    corresponding_channel_number = _channel_number;
+  }
+public void controlEvent(ControlEvent theEvent) {
+    updating_channel[corresponding_channel_number] = !updating_channel[corresponding_channel_number];
+    print("button"+corresponding_channel_number);
+    }
+}
 class choose_system_mode_ControlListener implements ControlListener {
   public void controlEvent(ControlEvent theEvent) {
   	choose_system_mode.close();

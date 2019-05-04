@@ -27,6 +27,7 @@ static class TimeSeriesConfig {
 	public static int num_seconds;
   public static ScrollableList vert_scale_control;
   public static ScrollableList window_length_control;
+  public float display_ratio_compute_baseline = 1;
 
 }
 
@@ -78,16 +79,7 @@ class ComputeBaseline {
   }
 }
 
-void channel_bar_udpate(){
-  while(true){
-    for(int i = 0 ; i < num_chan; i ++){
-        
-        TimeSeriesConfig.channel_vis[i].update();
-        }
-    delay(EegReceiverConfig.UPDATE_MILLIS - 10);
-    //delay(1000);
-  }
-}
+
 
 color[] channelColors = {
   color(129, 129, 129),
@@ -174,7 +166,7 @@ class ChannelBar{
     plot.setDim(channelbar_width- edge_button_length - button_plotleft_length - on_off_diameter - plotright_end_length , channelbar_height);
     onOffButton = cp5_2.addButton(str(channel_number))
     				.setPosition(pos_x + edge_button_length, pos_y + (int)(channelbar_height/2))
-    				.setSize(on_off_diameter,on_off_diameter);
+    				.setSize(on_off_diameter,on_off_diameter).addListener(new OnOffButton_ControlListener(channel_number - 1));
     // onOffButton = new Button(5,6,7,8,"test");
     
     plot.setMar(0f, 0f, 0f, 0f);
@@ -237,7 +229,8 @@ class ChannelBar{
     plotright_end_length = round(channelbar_width*0.005);
     plot.setPos(pos_x +edge_button_length+button_plotleft_length+ on_off_diameter, pos_y);
     plot.setDim(channelbar_width - edge_button_length - button_plotleft_length - on_off_diameter - plotright_end_length , channelbar_height);
-    onOffButton = cp5_2.addButton(str(channel_number))
+    print("initiated");
+    onOffButton = cp5_2.addButton(str(channel_number)).addListener(new OnOffButton_ControlListener(channel_number - 1))
     				.setPosition(pos_x + edge_button_length, pos_y + (int)(channelbar_height/2))
     				.setSize(on_off_diameter,on_off_diameter);
     // onOffButton.setDim(on_off_diameter,on_off_diameter);
@@ -319,9 +312,13 @@ void update(){
 
         case 1:
                 filt_uV_value = EegReceiverConfig.eeg_data_buff_copy[channel_number - 1][i + EegReceiverConfig.eeg_data_buff_copy[channel_number-1].length - nPoints];
+                if(!test_software_mode){
                 eeGDisplayCalibration[channel_number-1].addEEGData(filt_uV_value);
-                float baseline = eeGDisplayCalibration[channel_number-1].compute(1,200);
-                filt_uV_value = abs((-(filt_uV_value)+baseline));//resize 0x1FFFFF
+                float baseline = eeGDisplayCalibration[channel_number-1].compute(TimeSeriesConfig.display_ratio_compute_baseline,200);
+                filt_uV_value = ((-(filt_uV_value)+baseline));//resize 0x1FFFFF
+                }
+                
+                // filt_uV_value = LowPassFilter[i].runfilter(NotchFilter[i].runfilter(filt_uV_value));
 
                 break;
         
@@ -364,7 +361,8 @@ void update(){
     plot.beginDraw();
     //plot.drawBox(); // we won't draw this eventually ...
     plot.setXLim(-TimeSeriesConfig.num_seconds,0);
-     plot.setYLim(-TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())],TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())]);
+    plot.setYLim(-TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())],TimeSeriesConfig.vert_scale_list[int(TimeSeriesConfig.vert_scale_control.getValue())]);
+    // plot.setYLim(0.0,40000.0);
     plot.drawGridLines(0);
     plot.drawLines();
     
@@ -521,7 +519,10 @@ void initiate_timesieres_subwindow(PApplet p, ControlP5 cp5 ){
     eeGDisplayCalibration[i] = new ComputeBaseline();
   }
   intialize_channel_bars(p);
-
+  for(int i =0; i < TimeSeriesConfig.num_data_channel; i++)
+{
+ updating_channel[i] = true;
+}
 
 }
 
@@ -532,4 +533,5 @@ void intialize_channel_bars(PApplet p){
   for (int i = 0; i < TimeSeriesConfig.num_data_channel; i++){
     TimeSeriesConfig.channel_vis[i] = new ChannelBar(p, i+1);
 }
+
 }
