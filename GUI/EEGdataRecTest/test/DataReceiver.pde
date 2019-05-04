@@ -33,7 +33,13 @@ static class EegReceiverConfig{
     return 250;
   }
 }
+static class DataStorage{
+  
+  static File dataPath;
+  static String data_path;
+  static PrintWriter[] output= new PrintWriter[EegReceiverConfig.nchan];
 
+}
 void setup_serial_port()
 {
       EegReceiverConfig.myPort = new Serial(this, Serial.list()[5], 115200); 
@@ -43,16 +49,49 @@ void setup_serial_port()
 
 
 
-PrintWriter output;
+
 void read_data_thread(){
+    if(test_software_mode)
+  {
+    
+    while(true)
+    {
+      int time_ = millis();
+      int ii = 0;
+    while(millis() - time_<3){delay(1);}
+     
+        for( int i = 0; i< num_chan; i++){
+        if(updating_channel[i]) 
+        {
+          append_Shift(EegReceiverConfig.eeg_data_buff_copy[i],sin(ii*0.1)+sin(ii)+sin(ii*5));
+           //println(EegReceiverConfig.eeg_data_buff_copy[i][EegReceiverConfig.eeg_data_buff_copy.length - 1]);
+        }
+        }
+       ii = ii+1;
+      }
+      
+      
+    }
+  
+
+  else{
+        setup_serial_port();
+
     if(write_to_file == true)
     {
-      output = createWriter("positions.txt"); 
-    EegReceiverConfig.myPort.clear();  
-  }
+      for(int i = 0; i < EegReceiverConfig.nchan;i ++)
+      {
+            DataStorage.output[i] = createWriter(DataStorage.data_path +"/" + "channel_" + i+".txt"); 
+      }
+    }
+  EegReceiverConfig.myPort.clear(); 
   initiate_filter();
   //EegReceiverConfig.myPort.readBytesUntil(lf, inBuffer);
 while(true){  
+
+  
+  
+  
    if (EegReceiverConfig.myPort.available() > 200){
       EegReceiverConfig.myPort.clear();
       DAFlag=false;
@@ -65,10 +104,10 @@ while(true){
           //myPort.readBytesUntil(lf, inBuffer); // until 0x0A
           inBuffer = EegReceiverConfig.myPort.readBytes(29);
           float[] temp = data_transform(inBuffer);
-          if(write_to_file == true) output.println(temp[7]); 
           for(int i = 0; i < EegReceiverConfig.nchan; i++){
            
             EegReceiverConfig.update_data_eeg_buff[i][EegReceiverConfig.points_count] = temp[i];
+           if(write_to_file == true) DataStorage.output[i].println(temp[i]);
           }
           //println(EegReceiverConfig.update_data_eeg_buff[1]);
           //println(EegReceiverConfig.eeg_data_buff[1]);
@@ -76,7 +115,7 @@ while(true){
           if (EegReceiverConfig.points_count > (EegReceiverConfig.nPointsPerUpdate - 1)){
               for(int i = 0; i < EegReceiverConfig.nchan; i++){
               append_Shift(EegReceiverConfig.eeg_data_buff[i], EegReceiverConfig.update_data_eeg_buff[i]);
-              EegReceiverConfig.eeg_data_buff_copy[i] = EegReceiverConfig.eeg_data_buff[i].clone();
+              if(updating_channel[i]) EegReceiverConfig.eeg_data_buff_copy[i] = EegReceiverConfig.eeg_data_buff[i].clone();
               }
               
               EegReceiverConfig.points_count = 0;
@@ -97,6 +136,7 @@ while(true){
       }
     delay(1);
   }
+}
 }
 
 
@@ -133,6 +173,16 @@ void append_Shift(float[] data, float[] newData) {
         break;
     }
 }
+void append_Shift(float[] data, float newData) {
+
+        int end = data.length-1;
+        for (int i=0; i < end; i++) {
+          data[i]=data[i+1];  //shift data points down by 1
+        }
+        data[end] = newData;  //append new data
+
+}
+
 int size_STAT_Byte = 1; 
 int size_Channel_Byte = 3; 
 
@@ -159,7 +209,7 @@ float[] data_transform(byte[] data_packet){
           }
           
           eeg_datas_read[ss]=(float(eeg_datas[ss])*4.5*2/16)/(2^24);;
-          // print("EEGData"+ss+": "+(eeg_datas_read[ss])+" ");
+          print("EEGData"+ss+": "+(eeg_datas_read[ss])+" ");
         }
           if(EegReceiverConfig.offset_posi < 500){
             for(int i = 0; i < EegReceiverConfig.nchan; i++)
@@ -175,10 +225,9 @@ float[] data_transform(byte[] data_packet){
             for(int i = 0; i < EegReceiverConfig.nchan; i++){
                       eeg_datas_read[i] -= EegReceiverConfig.channel_baseline[i];
                       eeg_datas_read[i] = LowPassFilter[i].runfilter(NotchFilter[i].runfilter(eeg_datas_read[i]));
-                      print("EEGDataFloat"+i+": "+(eeg_datas_read[i])+" ");
+                      //print("EEGDataFloat"+i+": "+(eeg_datas_read[i])+" ");
 
             }
-            println("");
             
             if(EegReceiverConfig.entering_ploting==false){
 

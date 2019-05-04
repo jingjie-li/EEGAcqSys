@@ -9,3 +9,4 @@ void initiate_filter(){
 		LowPassFilter[i] = new LowPass();
 	}
 }
+boolean[] updating_channel = new boolean[8];

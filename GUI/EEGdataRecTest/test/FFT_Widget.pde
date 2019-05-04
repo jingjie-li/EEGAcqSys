@@ -51,7 +51,7 @@ import ddf.minim.analysis.*;
      FFTConfig.lineColor = lineColor;
      FFTConfig.FFT_indexLim = int(1.0*FFTConfig.xMax*(getNfftSafe()/EegReceiverConfig.getSampleRateSafe()));
      FFTConfig.fft_points = new GPointsArray[num_chan];
-     FFTConfig.fft_plot =  new GPlot(p, 0, 552-control_panel_pos_x, 578, 319);
+     FFTConfig.fft_plot =  new GPlot(p, 0, 627-control_panel_pos_x, 578, 319);
      FFTConfig.fftBuff = new FFT[num_chan];
      FFTConfig.fs_Hz = EegReceiverConfig.getSampleRateSafe();
      FFTConfig.nfft = getNfftSafe();

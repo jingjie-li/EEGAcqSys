@@ -2,14 +2,13 @@ import controlP5.*;
 import java.util.*;
 import g4p_controls.*; 
 
-boolean test_software_mode = false;
+boolean test_software_mode = true;
 boolean test_hardware_mode = false;
 boolean write_to_file = false;
 
-
 ControlP5 cp5;
 ControlP5 cp5_2;
-
+;
 ScrollableList choose_system_mode;
 ScrollableList choose_data_source;
 ScrollableList add_plot;
@@ -46,11 +45,10 @@ boolean source_connected = false;
 
 void settings(){
   size(1183,900);
-  
 }
 
 void setup(){
-     surface.setLocation(control_panel_pos_x, control_panel_pos_y);
+  surface.setLocation(control_panel_pos_x, control_panel_pos_y);
 
   frameRate(40);
   //surface.setAlwaysOnTop(true); //force the screen to stay on the top!
@@ -63,14 +61,29 @@ void setup(){
   initiate_control_panel();
   initiate_timesieres_subwindow(this, cp5);
   initialize_FFT_plot(this);
+  initiate_bandpower_plot(this);
   // lines = loadStrings("Users/liusitan/Downloads/ADS1299TEST(1).txt");
-  if(!test_software_mode){
-    setup_serial_port();
+
     thread("read_data_thread");
       
+  
+  if(write_to_file ==true);
+  {
+    String _current_sketch_path = sketchPath();
+    File _temp_path = new File(_current_sketch_path);
+    
+    int i = 0;
+    DataStorage.dataPath = new File(_current_sketch_path,"data_"+i);
+    while(DataStorage.dataPath.exists())
+    {
+      i++;
+      DataStorage.dataPath = new File(_temp_path,"data_"+i);
+    }
+    DataStorage.dataPath.mkdirs();
+    DataStorage.data_path = DataStorage.dataPath.toString();
   }
   //thread("channel_bar_udpate");
-
+  
 
 }
 
@@ -80,11 +93,25 @@ void draw(){
 
 	background(240); //<>//
   pushStyle();
+  fill(color(#C4C4C4));
+  rect(0, control_panel_height, control_panel_width, window_height);
+  fill(color(#F2F2F2));
+  strokeWeight(4);
+  stroke(color(#57068C));
+
+  rect(75-control_panel_pos_x,106 - control_panel_pos_y,1181,450);
+  fill(color(#57068C));
+  line(592,514,592,362+508);
+  
+  popStyle();
+  
+  
+  
+  pushStyle();
   
   fill(color(#57068C));
   rect(0,0,control_panel_width,control_panel_height);
-  fill(color(#C4C4C4));
-  rect(0, control_panel_height, control_panel_width, window_height);
+  
   popStyle();
   rectMode(CORNER);
   stroke(color(#000000));
@@ -111,17 +138,20 @@ void draw(){
        
         for (int i = 0; i < TimeSeriesConfig.num_data_channel; i++)
       {
-    TimeSeriesConfig.channel_vis[i].update();
-    TimeSeriesConfig.channel_vis[i].draw_();
+          TimeSeriesConfig.channel_vis[i].update();
+          TimeSeriesConfig.channel_vis[i].draw_();
         }
 
 
   }
-        FFT_update();
-        FFT_draw();
   
-  cp5_2.draw();
-  cp5.draw();
+    FFT_update();
+    FFT_draw();
+    bandpower_update();
+    bandpower_draw();
+
+    cp5_2.draw();
+    cp5.draw();
   //TimeSeriesConfig.channel_vis[0].get_plot().defaultDraw();
   
 }
@@ -187,9 +217,13 @@ void create_timeseries_window(){
 
 void keyTyped() {
     if (key == 'x' ) {
-     
-  output.flush(); // Writes the remaining data to the file
-  output.close(); // Finishes the file
+  for(int i = 0; i < EegReceiverConfig.nchan; i++)  
+  {
+    DataStorage.output[i].flush(); // Writes the remaining data to the file
+  DataStorage.output[i].close(); // Finishes the file
+  }
+  
+  if(!test_software_mode)EegReceiverConfig.myPort.write('E');
   exit(); // Stops the program
 }
 }
