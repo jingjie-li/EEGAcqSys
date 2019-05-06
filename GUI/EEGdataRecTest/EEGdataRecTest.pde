@@ -194,7 +194,7 @@ void readDataThread(){
     if (DAFlag) {
       inBuffer = myPort.readBytes(29);
       //displaybuffData(inBuffer);
-      if(int(inBuffer[0])==192){
+      if(int(inBuffer[0]&0xf0)==192){
         STAT=(convertByte(inBuffer[0])<<16)+(convertByte(inBuffer[1])<<8)+convertByte(inBuffer[2]);
         print("STAT: "+hex(STAT)+" ");
         for(int ss=0;ss<8;ss++)
@@ -206,13 +206,13 @@ void readDataThread(){
           }
           //EEGdatas[6]=EEGdatas[6]-mean(float(offsetRcv));
           EEGdatasRead[ss]=(float(EEGdatas[ss])*4.5*2/16)/(2^24);//in mV
-          // print("EEGData"+ss+": "+(EEGdatas[ss])+" ");
-          // print("EEGDataFloat"+ss+": "+(EEGdatasRead[ss])+" ");
+          print("EEGData"+ss+": "+(hex(EEGdatas[ss]))+" ");
+          //print("EEGDataFloat"+ss+": "+(EEGdatasRead[ss])+" ");
         }
          // println("EEGDataFloat6: "+EEGdatasRead[6]+"Offset: "+offsetSum/500);
 
         if(OffsetPosi<500){
-          offsetSum+=EEGdatasRead[6];
+          offsetSum+=EEGdatasRead[0];
           OffsetPosi++;
         }else{
           println(offsetSum/500);
@@ -221,9 +221,9 @@ void readDataThread(){
             myPort.write('S');
             EnteringPloting=true;
           }
-          EEGdatasRead[6]-=offsetSum/500;
+          EEGdatasRead[0]-=offsetSum/500;
           //updateDataEEG(EEGdatasRead[6]);
-          updateDataEEG(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[6])));
+          updateDataEEG(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[0])));
         }
         delay(1);
       }
@@ -269,7 +269,7 @@ void updateDataEEG(float EEGdata){
     //EEGdata=EEG1_baseline.prevdata;
   //}
   //a=1;
-  a=0.01;
+  a=0.1;
   //b=1800; 
   b=EEG1_baseline.compute(a,200);
   //b=-900; 
