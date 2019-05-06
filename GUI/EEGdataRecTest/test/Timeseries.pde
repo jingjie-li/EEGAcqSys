@@ -496,7 +496,9 @@ void initiate_timesieres_subwindow(PApplet p, ControlP5 cp5 ){
   .setOpen(false)
   .setValue(1)
   .setType(ControlP5.LIST).setFont(font);
-
+  cp5.addButton("StopAll").setPosition(900 - control_panel_pos_x,114 - control_panel_pos_y)
+  .setSize(150,23).addListener(new Thanos_button_ControlListener());
+  
 
   TimeSeriesConfig.channel_bar_width = 1139;
   TimeSeriesConfig.channel_bar_height = 50;
@@ -522,7 +524,7 @@ void initiate_timesieres_subwindow(PApplet p, ControlP5 cp5 ){
   intialize_channel_bars(p);
   for(int i =0; i < TimeSeriesConfig.num_data_channel; i++)
 {
- updating_channel[i] = true;
+ updating_channel[i] = true ;
 }
 on_off_button_mode = new int[8];
 for(int i = 0; i< EegReceiverConfig.nchan;i++) on_off_button_mode[i] = 0;

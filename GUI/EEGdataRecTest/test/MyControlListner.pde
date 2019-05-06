@@ -27,6 +27,20 @@ class start_button_ControlListener implements ControlListener{
   }
 }
 
+
+class Thanos_button_ControlListener implements ControlListener{
+  public void controlEvent(ControlEvent theEvent){
+    for(int i =0; i< on_off_button_mode.length;i++){
+    on_off_button_mode[i] = SETZERO;
+    updating_channel[i] =false;
+    EegReceiverConfig.eeg_data_buff_copy[i] = new float[EegReceiverConfig.eeg_buff_size];}
+
+    
+  }
+
+}
+
+
 class OnOffButton_ControlListener implements ControlListener{
   int corresponding_channel_number;
   OnOffButton_ControlListener(int _channel_number)
@@ -34,6 +48,8 @@ class OnOffButton_ControlListener implements ControlListener{
     corresponding_channel_number = _channel_number;
   }
 public void controlEvent(ControlEvent theEvent) {
+      on_off_button_mode[corresponding_channel_number] = on_off_button_mode[corresponding_channel_number]+1;
+
     on_off_button_mode[corresponding_channel_number] = on_off_button_mode[corresponding_channel_number] % 3;
     switch(on_off_button_mode[corresponding_channel_number]){
     case RUNNING:
@@ -49,7 +65,6 @@ public void controlEvent(ControlEvent theEvent) {
     default:
     }
     print("button"+corresponding_channel_number+"mode"+on_off_button_mode[corresponding_channel_number]);
-    on_off_button_mode[corresponding_channel_number] = on_off_button_mode[corresponding_channel_number]+1;
     
     }
 }
