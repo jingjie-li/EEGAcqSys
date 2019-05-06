@@ -1,0 +1,12 @@
+{
+  "block_number": 2,
+  "Stimulus_sequence": [
+    ["rc","lc","fc","rr","lr","fr"],
+    ["rc","lc","fc","rr","lr","fr"]
+    ],
+  "attention_time": [2000,3000],
+  "intertrial_interval": 1500,
+  "interblock_interval": 10000,
+  "stimulus_time":3500,
+  "Name": "Motor_Imagery"
+}

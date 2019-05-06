@@ -13,6 +13,7 @@ ScrollableList choose_system_mode;
 ScrollableList choose_data_source;
 ScrollableList add_plot;
 Button start_button;
+Slider playBackBar;
 
 int System_Mode_Index = -1;
 String[] System_Mode_Name = {"SIGNAL_VISUALIZATION","BEHAVIORAL_TRAINING","TRAINING_COLLECTED_DATA","CONTROL_CURSOR"};
@@ -64,7 +65,7 @@ void setup(){
   initiate_bandpower_plot(this);
   // lines = loadStrings("Users/liusitan/Downloads/ADS1299TEST(1).txt");
 
-    thread("read_data_thread");
+  thread("read_data_thread");
       
   
   if(write_to_file ==true);
@@ -207,6 +208,7 @@ pushStyle();
                   .setSize(91,41)
                   .addListener(new start_button_ControlListener())
                   .setView(new start_button_view()).setVisible(false);
+
   font.setSize(8);
 }
 void create_timeseries_window(){

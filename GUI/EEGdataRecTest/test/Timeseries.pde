@@ -312,6 +312,7 @@ void update(){
 
         case 1:
                 filt_uV_value = EegReceiverConfig.eeg_data_buff_copy[channel_number - 1][i + EegReceiverConfig.eeg_data_buff_copy[channel_number-1].length - nPoints];
+                //println(filt_uV_value);
                 if(!test_software_mode){
                 eeGDisplayCalibration[channel_number-1].addEEGData(filt_uV_value);
                 float baseline = eeGDisplayCalibration[channel_number-1].compute(TimeSeriesConfig.display_ratio_compute_baseline,200);

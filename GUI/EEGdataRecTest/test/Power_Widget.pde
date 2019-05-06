@@ -110,13 +110,14 @@ void initiate_bandpower_plot(PApplet p){
     }
     }
 
+    BandPowerConfig.points3 = new GPointsArray();
 
-    BandPowerConfig.points3.add(DELTA + 0.5, BandPowerConfig.headWidePower[DELTA], "DELTA");
-    BandPowerConfig.points3.add(THETA + 0.5, BandPowerConfig.headWidePower[THETA], "THETA");
-    BandPowerConfig.points3.add(ALPHA + 0.5, BandPowerConfig.headWidePower[ALPHA], "ALPHA");
+    BandPowerConfig.points3.add(DELTA + 0.5 , BandPowerConfig.headWidePower[DELTA], "DELTA");
+    BandPowerConfig.points3.add(THETA +0.5, BandPowerConfig.headWidePower[THETA], "THETA");
+    BandPowerConfig.points3.add(ALPHA + 0.5 , BandPowerConfig.headWidePower[ALPHA], "ALPHA");
     BandPowerConfig.points3.add(BETA + 0.5, BandPowerConfig.headWidePower[BETA], "BETA");
     BandPowerConfig.points3.add(GAMMA + 0.5,BandPowerConfig.headWidePower[GAMMA], "GAMMA");
-
+   
     BandPowerConfig.plot3.setPoints(BandPowerConfig.points3);
     BandPowerConfig.plot3.getTitle().setText("Band Power");
     
