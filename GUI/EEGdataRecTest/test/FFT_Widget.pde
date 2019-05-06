@@ -42,11 +42,11 @@ import ddf.minim.analysis.*;
      (int)color(224, 56, 45),
      (int)color(162, 82, 49),
 
-     (int)color(129, 129, 129),
-     (int)color(221, 178, 13),
-     (int)color(253, 94, 52),
-     (int)color(224, 56, 45),
-     (int)color(162, 82, 49)
+     //(int)color(129, 129, 129),
+     //(int)color(221, 178, 13),
+     //(int)color(253, 94, 52),
+     //(int)color(224, 56, 45),
+     //(int)color(162, 82, 49)
    };
      FFTConfig.lineColor = lineColor;
      FFTConfig.FFT_indexLim = int(1.0*FFTConfig.xMax*(getNfftSafe()/EegReceiverConfig.getSampleRateSafe()));

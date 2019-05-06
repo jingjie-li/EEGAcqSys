@@ -524,6 +524,8 @@ void initiate_timesieres_subwindow(PApplet p, ControlP5 cp5 ){
 {
  updating_channel[i] = true;
 }
+on_off_button_mode = new int[8];
+for(int i = 0; i< EegReceiverConfig.nchan;i++) on_off_button_mode[i] = 0;
 
 }
 

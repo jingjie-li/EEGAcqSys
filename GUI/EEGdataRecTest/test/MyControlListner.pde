@@ -1,5 +1,12 @@
 // Controll Listener for Contoller
 
+boolean system_start = false;
+int[] on_off_button_mode;
+final int STOPRECEIVING = 1;
+final int SETZERO = 2;
+final int RUNNING = 0;
+
+
 
 class choose_data_source_ControlListener implements ControlListener {
   int col;
@@ -11,7 +18,7 @@ class choose_data_source_ControlListener implements ControlListener {
     println("i got an event from choose_data_source");
   }
 }
-boolean system_start = false;
+
 class start_button_ControlListener implements ControlListener{
   public void controlEvent(ControlEvent theEvent){
     system_start = !system_start;
@@ -27,10 +34,31 @@ class OnOffButton_ControlListener implements ControlListener{
     corresponding_channel_number = _channel_number;
   }
 public void controlEvent(ControlEvent theEvent) {
-    updating_channel[corresponding_channel_number] = !updating_channel[corresponding_channel_number];
-    print("button"+corresponding_channel_number);
+    on_off_button_mode[corresponding_channel_number] = on_off_button_mode[corresponding_channel_number] % 3;
+    switch(on_off_button_mode[corresponding_channel_number]){
+    case RUNNING:
+    updating_channel[corresponding_channel_number] = true;
+    break;
+    case STOPRECEIVING:
+    updating_channel[corresponding_channel_number] =false;
+    break;
+    case SETZERO:
+    updating_channel[corresponding_channel_number] =false;
+    EegReceiverConfig.eeg_data_buff_copy[corresponding_channel_number] = new float[EegReceiverConfig.eeg_buff_size];
+    break;
+    default:
+    }
+    print("button"+corresponding_channel_number+"mode"+on_off_button_mode[corresponding_channel_number]);
+    on_off_button_mode[corresponding_channel_number] = on_off_button_mode[corresponding_channel_number]+1;
+    
     }
 }
+
+
+
+
+
+
 class choose_system_mode_ControlListener implements ControlListener {
   public void controlEvent(ControlEvent theEvent) {
   	choose_system_mode.close();

@@ -60,18 +60,20 @@ void read_data_thread(){
     while(true)
     {
       int time_ = millis();
-      float[] test_signal = new float[30];
-      for(int i = 0; i<test_signal.length;i++){
+      float[][] test_signal = new float[8][30];
+      for(int j = 0; j<test_signal.length;j++){
+      for(int i = 0; i<test_signal[j].length;i++){
         
-        test_signal[i] = random(100);
+        test_signal[j][i] = random(100);
+      }
       }
     while(millis() - time_<30){delay(2);}
      
         for( int i = 0; i< num_chan; i++){
         if(updating_channel[i]) 
         {
-          append_Shift(EegReceiverConfig.eeg_data_buff_copy[i],test_signal);
-           println(EegReceiverConfig.eeg_data_buff_copy[i][EegReceiverConfig.eeg_data_buff_copy.length - 1]);
+          append_Shift(EegReceiverConfig.eeg_data_buff_copy[i],test_signal[i]);
+           //println(EegReceiverConfig.eeg_data_buff_copy[i][EegReceiverConfig.eeg_data_buff_copy.length - 1]);
            
         }
         }
