@@ -318,9 +318,7 @@ void update(){
                 float baseline = eeGDisplayCalibration[channel_number-1].compute(TimeSeriesConfig.display_ratio_compute_baseline,200);
                 filt_uV_value = ((-(filt_uV_value)+baseline));//resize 0x1FFFFF
                 }
-                
-                // filt_uV_value = LowPassFilter[i].runfilter(NotchFilter[i].runfilter(filt_uV_value));
-
+               
                 break;
         
         default:

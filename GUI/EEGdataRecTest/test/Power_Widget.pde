@@ -54,7 +54,7 @@ void initiate_bandpower_plot(PApplet p){
     BandPowerConfig.plot3.setPos(678 - control_panel_pos_x, 597 - control_panel_pos_y);
     BandPowerConfig.plot3.setDim(478, 217);
     BandPowerConfig.plot3.setLogScale("y");
-    BandPowerConfig.plot3.setYLim(0.1, 100);
+    BandPowerConfig.plot3.setYLim(0.1, 1000);
     BandPowerConfig.plot3.setXLim(0, 5);
     BandPowerConfig.plot3.getYAxis().setNTicks(9);
     BandPowerConfig.plot3.getTitle().setTextAlignment(LEFT);
@@ -96,7 +96,7 @@ void initiate_bandpower_plot(PApplet p){
             // binNum ++;
           }
         }
-        BandPowerConfig.avgPowerInBins[Ichan][i] = sum;   // total power in a band
+        BandPowerConfig.avgPowerInBins[Ichan][i] = sum/500;   // total power in a band
         // println(i, binNum, sum);
       }
      //end the loop over channels.
@@ -111,7 +111,7 @@ void initiate_bandpower_plot(PApplet p){
     }
 
     BandPowerConfig.points3 = new GPointsArray();
-
+    //printArray(BandPowerConfig.headWidePower);
     BandPowerConfig.points3.add(DELTA + 0.5 , BandPowerConfig.headWidePower[DELTA], "DELTA");
     BandPowerConfig.points3.add(THETA +0.5, BandPowerConfig.headWidePower[THETA], "THETA");
     BandPowerConfig.points3.add(ALPHA + 0.5 , BandPowerConfig.headWidePower[ALPHA], "ALPHA");

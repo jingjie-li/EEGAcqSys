@@ -1,9 +1,10 @@
 {
   "block_number": 2,
-  "Stimulus_sequence": [
+  "stimulus_sequence": [
     ["rc","lc","fc","rr","lr","fr"],
     ["rc","lc","fc","rr","lr","fr"]
     ],
+  "trial_number": 6,
   "attention_time": [2000,3000],
   "intertrial_interval": 1500,
   "interblock_interval": 10000,

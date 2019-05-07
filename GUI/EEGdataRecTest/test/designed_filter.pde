@@ -50,3 +50,19 @@ class LowPass {
     return y0;
   }
 }
+
+class HighPass {
+  float[] w0={0,0,0};
+  float[] HP_A={1,-1.822694925196308,0.837181651256023};
+  float[] HP_B={0.914969144113083,-1.829938288226165,0.914969144113083};
+  float y0=0;
+  HighPass(){
+  }
+  float runfilter(float convertval){
+    w0[0]=HP_A[0]*convertval-HP_A[1]*w0[1]-HP_A[2]*w0[2];
+    y0=HP_B[0]*w0[0]+HP_B[1]*w0[1]+HP_B[2]*w0[2];
+    w0[2]=w0[1];
+    w0[1]=w0[0];
+    return y0;
+  }
+}

@@ -234,7 +234,7 @@ float[] data_transform(byte[] data_packet){
 
             for(int i = 0; i < EegReceiverConfig.nchan; i++){
                       eeg_datas_read[i] -= EegReceiverConfig.channel_baseline[i];
-                      eeg_datas_read[i] = LowPassFilter[i].runfilter(NotchFilter[i].runfilter(eeg_datas_read[i]));
+                      eeg_datas_read[i] = HighPassFilter[i].runfilter(LowPassFilter[i].runfilter(NotchFilter[i].runfilter(eeg_datas_read[i])));
                       //print("EEGDataFloat"+i+": "+(eeg_datas_read[i])+" ");
 
             }
