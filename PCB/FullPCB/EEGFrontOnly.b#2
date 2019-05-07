@@ -4712,10 +4712,8 @@ design rules under a new name.</description>
 <wire x1="27.7512" y1="-37.029" x2="27.8456" y2="-37.1234" width="0.254" layer="1"/>
 <contactref element="C78" pad="1"/>
 <contactref element="C79" pad="1"/>
-<contactref element="U$3" pad="1"/>
 <wire x1="-3.882" y1="-65.278" x2="-3.882" y2="-68.58" width="0" layer="19" extent="1-1"/>
-<wire x1="-2.667" y1="-56.162" x2="-3.882" y2="-65.278" width="0" layer="19" extent="1-1"/>
-<wire x1="23.0196" y1="-36.40973125" x2="-2.667" y2="-56.162" width="0" layer="19" extent="1-1"/>
+<wire x1="23.0196" y1="-36.40973125" x2="-3.882" y2="-65.278" width="0" layer="19" extent="1-1"/>
 <wire x1="34.924" y1="-37.367" x2="30.673" y2="-39.735" width="0" layer="19" extent="1-1"/>
 <wire x1="34.798" y1="-31.3944" x2="36.32826875" y2="-36.8776" width="0" layer="19" extent="1-1"/>
 <wire x1="39.2684" y1="-27.9146" x2="34.798" y2="-31.3944" width="0" layer="19" extent="1-1"/>
@@ -6540,12 +6538,6 @@ design rules under a new name.</description>
 </signal>
 <signal name="N$34">
 <contactref element="U$3" pad="3"/>
-</signal>
-<signal name="D+_ISO">
-<contactref element="U$3" pad="5"/>
-</signal>
-<signal name="D-_ISO">
-<contactref element="U$3" pad="6"/>
 </signal>
 </signals>
 </board>

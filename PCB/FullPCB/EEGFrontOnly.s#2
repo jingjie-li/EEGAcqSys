@@ -13537,20 +13537,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <wire x1="320.04" y1="58.42" x2="314.96" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="D+_ISO" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="D+"/>
-<wire x1="320.04" y1="53.34" x2="317.5" y2="53.34" width="0.1524" layer="91"/>
-<label x="317.5" y="53.34" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="D-_ISO" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="D-"/>
-<wire x1="320.04" y1="50.8" x2="317.5" y2="50.8" width="0.1524" layer="91"/>
-<label x="317.5" y="50.8" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
 </nets>
 </sheet>
 </sheets>

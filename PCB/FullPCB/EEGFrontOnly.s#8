@@ -10881,7 +10881,7 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <part name="R24" library="SparkFun-Resistors" deviceset="10KOHM" device="-0402-1/10W-1%" value="10k"/>
 <part name="S2" library="SparkFun-Switches" deviceset="MOMENTARY-SWITCH-SPST" device="-PTH-6.0MM"/>
 <part name="GND15" library="SparkFun-PowerSymbols" deviceset="GND2" device=""/>
-<part name="Y1" library="SparkFun-Clocks" deviceset="CRYSTAL" device="SMD-3.2X2.5" value="30MHz"/>
+<part name="Y1" library="SparkFun-Clocks" deviceset="CRYSTAL" device="SMD-3.2X2.5"/>
 <part name="C57" library="SparkFun-Capacitors" deviceset="22PF" device="-0402-50V-5%" value="22pF"/>
 <part name="C58" library="SparkFun-Capacitors" deviceset="22PF" device="-0402-50V-5%" value="22pF"/>
 <part name="GND16" library="SparkFun-PowerSymbols" deviceset="GND2" device=""/>
@@ -10943,11 +10943,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <part name="J2" library="SparkFun-Connectors" deviceset="USB_B" device="_PTH"/>
 <part name="J11" library="SparkFun-Connectors" deviceset="MICRO-SD_CARD_SOCKET" device=""/>
 <part name="U$3" library="ch340g" deviceset="CH340G" device=""/>
-<part name="Y2" library="SparkFun-Clocks" deviceset="CRYSTAL" device="SMD-3.2X2.5" value="12MHz"/>
-<part name="C78" library="SparkFun-Capacitors" deviceset="22PF" device="-0402-50V-5%" value="22pF"/>
-<part name="C79" library="SparkFun-Capacitors" deviceset="22PF" device="-0402-50V-5%" value="22pF"/>
-<part name="GND25" library="SparkFun-PowerSymbols" deviceset="GND2" device=""/>
-<part name="SUPPLY23" library="SparkFun-PowerSymbols" deviceset="3.3V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -12778,11 +12773,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <instance part="C77" gate="G$1" x="-7.62" y="68.58"/>
 <instance part="J11" gate="1" x="160.02" y="71.12"/>
 <instance part="U$3" gate="G$1" x="332.74" y="53.34"/>
-<instance part="Y2" gate="G$1" x="309.88" y="45.72" rot="R90"/>
-<instance part="C78" gate="G$1" x="304.8" y="50.8" rot="R90"/>
-<instance part="C79" gate="G$1" x="304.8" y="40.64" rot="R90"/>
-<instance part="GND25" gate="G$1" x="297.18" y="34.29"/>
-<instance part="SUPPLY23" gate="G$1" x="314.96" y="55.88"/>
 </instances>
 <busses>
 </busses>
@@ -13036,16 +13026,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <pinref part="C67" gate="G$1" pin="2"/>
 <wire x1="-76.2" y1="45.72" x2="-76.2" y2="43.18" width="0.1524" layer="91"/>
 <junction x="-76.2" y="43.18"/>
-</segment>
-<segment>
-<pinref part="GND25" gate="G$1" pin="GND"/>
-<wire x1="297.18" y1="36.83" x2="297.18" y2="40.64" width="0.1524" layer="91"/>
-<pinref part="C78" gate="G$1" pin="1"/>
-<wire x1="297.18" y1="40.64" x2="297.18" y2="50.8" width="0.1524" layer="91"/>
-<wire x1="297.18" y1="50.8" x2="299.72" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="C79" gate="G$1" pin="1"/>
-<wire x1="299.72" y1="40.64" x2="297.18" y2="40.64" width="0.1524" layer="91"/>
-<junction x="297.18" y="40.64"/>
 </segment>
 </net>
 <net name="TMS" class="0">
@@ -13344,11 +13324,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <pinref part="C73" gate="G$1" pin="1"/>
 <wire x1="-45.72" y1="53.34" x2="-45.72" y2="55.88" width="0.1524" layer="91"/>
 </segment>
-<segment>
-<pinref part="U$3" gate="G$1" pin="V3"/>
-<wire x1="320.04" y1="55.88" x2="314.96" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="SUPPLY23" gate="G$1" pin="3.3V"/>
-</segment>
 </net>
 <net name="1.8V" class="0">
 <segment>
@@ -13471,84 +13446,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <pinref part="U11" gate="A" pin="~XRS"/>
 <wire x1="2.54" y1="124.46" x2="-2.54" y2="124.46" width="0.1524" layer="91"/>
 <label x="-2.54" y="124.46" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="SPI_MOSI" class="0">
-<segment>
-<pinref part="U11" gate="B" pin="GPIO54/SPISIMOA/XD25"/>
-<wire x1="269.24" y1="93.98" x2="271.78" y2="93.98" width="0.1524" layer="91"/>
-<label x="271.78" y="93.98" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="SPI_MISO" class="0">
-<segment>
-<pinref part="U11" gate="B" pin="GPIO55/SPISOMIA/XD24"/>
-<wire x1="269.24" y1="91.44" x2="271.78" y2="91.44" width="0.1524" layer="91"/>
-<label x="271.78" y="91.44" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="SPI_CLK" class="0">
-<segment>
-<pinref part="U11" gate="B" pin="GPIO56/SPICLKA/XD23"/>
-<wire x1="269.24" y1="88.9" x2="271.78" y2="88.9" width="0.1524" layer="91"/>
-<label x="271.78" y="88.9" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="SPI_CS" class="0">
-<segment>
-<pinref part="U11" gate="B" pin="GPIO57/~SPISTEA/XD22"/>
-<wire x1="269.24" y1="86.36" x2="271.78" y2="86.36" width="0.1524" layer="91"/>
-<label x="271.78" y="86.36" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="N$12" class="0">
-<segment>
-<pinref part="Y2" gate="G$1" pin="2"/>
-<pinref part="U$3" gate="G$1" pin="XI"/>
-<wire x1="309.88" y1="48.26" x2="320.04" y2="48.26" width="0.1524" layer="91"/>
-<pinref part="C78" gate="G$1" pin="2"/>
-<wire x1="309.88" y1="48.26" x2="309.88" y2="50.8" width="0.1524" layer="91"/>
-<wire x1="309.88" y1="50.8" x2="307.34" y2="50.8" width="0.1524" layer="91"/>
-<junction x="309.88" y="48.26"/>
-</segment>
-</net>
-<net name="N$14" class="0">
-<segment>
-<pinref part="Y2" gate="G$1" pin="1"/>
-<wire x1="309.88" y1="43.18" x2="314.96" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="314.96" y1="43.18" x2="314.96" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="U$3" gate="G$1" pin="XO"/>
-<wire x1="314.96" y1="45.72" x2="320.04" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="C79" gate="G$1" pin="2"/>
-<wire x1="307.34" y1="40.64" x2="309.88" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="309.88" y1="40.64" x2="309.88" y2="43.18" width="0.1524" layer="91"/>
-<junction x="309.88" y="43.18"/>
-</segment>
-</net>
-<net name="N$33" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="TX"/>
-<wire x1="320.04" y1="60.96" x2="314.96" y2="60.96" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$34" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="RX"/>
-<wire x1="320.04" y1="58.42" x2="314.96" y2="58.42" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="D+_ISO" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="D+"/>
-<wire x1="320.04" y1="53.34" x2="317.5" y2="53.34" width="0.1524" layer="91"/>
-<label x="317.5" y="53.34" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="D-_ISO" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="D-"/>
-<wire x1="320.04" y1="50.8" x2="317.5" y2="50.8" width="0.1524" layer="91"/>
-<label x="317.5" y="50.8" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>

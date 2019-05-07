@@ -20,6 +20,14 @@
 #define  RST_BIT2	GpioDataRegs.GPBCLEAR.bit.GPIO62 = 1		//与外设板 8_LEDS 端子的 IO54 对应
 #define  SET_BIT1   GpioDataRegs.GPBSET.bit.GPIO63	 = 1		//与外设板 8_LEDS 端子的 IO55 对应
 #define  RST_BIT1	GpioDataRegs.GPBCLEAR.bit.GPIO63 = 1		//与外设板 8_LEDS 端子的 IO55 对应
+#define LED1_OFF		GpioDataRegs.GPASET.bit.GPIO0 = 1							//LED D10 on
+#define LED1_ON			GpioDataRegs.GPACLEAR.bit.GPIO0 = 1						//LED D10 off
+#define LED2_OFF		GpioDataRegs.GPASET.bit.GPIO1 = 1							//LED D11 on
+#define LED2_ON			GpioDataRegs.GPACLEAR.bit.GPIO1 = 1						//LED D11 off
+#define LED3_OFF		GpioDataRegs.GPASET.bit.GPIO2 = 1							//LED D12 on
+#define LED3_ON			GpioDataRegs.GPACLEAR.bit.GPIO2 = 1						//LED D12 off
+#define LED4_OFF		GpioDataRegs.GPASET.bit.GPIO3 = 1							//LED D13 on
+#define LED4_ON			GpioDataRegs.GPACLEAR.bit.GPIO3 = 1						//LED D13 off
 /*****************************************************************************************************/
 
 
@@ -37,6 +45,10 @@ Uint16 spi_send(Uint16 b);
 Uint16 spi_rcv(void);
 Uint16 ads1299_read2reg(Uint16 addr, Uint16 nums);
 void scib_msg(char *msg);
+void ads1299_WREG(Uint16 addr, Uint16 nums, Uint16 *Data);
+void ads1299_RDATAC(Uint16 *Data_Rcv);
+void ads1299_SendUARTRaw(Uint16 *Data_Rcv);
+void ads1299_ConvRcvData(Uint16 *Data_Rcv, Uint32 *EEGCH1, Uint32 *EEGCH2, Uint32 *EEGCH3, Uint32 *EEGCH4, Uint32 *EEGCH5, Uint32 *EEGCH6, Uint32 *EEGCH7,Uint32 *EEGCH8, Uint32 *STAT_Data);
 /*****************************************************************************************************/
 
 /************************************定义相关变量*********************************************/
@@ -52,10 +64,16 @@ Uint16 Sci_Send_Data = 0;
 Uint16 Spi_Send_Data = 0;
 Uint16 ADS_Rcv_Data = 0;
 Uint16 ADS1299_Rcv_Data = 0;
+Uint16 Data_Rcv[27]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+Uint16 Data[8]={0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000};
+//Uint32 8Ch_Data[8]={0,0,0,0,0,0,0,0};
+Uint32 EEGCH1=0,EEGCH2=0,EEGCH3=0,EEGCH4=0,EEGCH5=0,EEGCH6=0,EEGCH7=0,EEGCH8=0;
+Uint32 STAT_Data=0;
+char chr; //received bytes
 
 /*****************************************************************************************************/
 
-/******************************数码管位选 IO 接口初始化*******************************************/
+/******************************Init GPIOs*******************************************/
   
 void Init_LEDS_Gpio(void)
 {  
@@ -80,7 +98,32 @@ void Init_LEDS_Gpio(void)
 	GpioCtrlRegs.GPBPUD.bit.GPIO63 = 0;   					// Enable pullup on GPIO11
     GpioDataRegs.GPBSET.bit.GPIO63 = 1;   					// Load output latch
     GpioCtrlRegs.GPBMUX2.bit.GPIO63 = 0;  					// GPIO19 = GPIO
-    GpioCtrlRegs.GPBDIR.bit.GPIO63 = 1;   					// GPIO19 = output    
+    GpioCtrlRegs.GPBDIR.bit.GPIO63 = 1;   					// GPIO19 = output
+    
+    
+    GpioCtrlRegs.GPAMUX1.bit.GPIO15 = 0;   //congifure input
+    GpioCtrlRegs.GPADIR.bit.GPIO15 = 0;   
+    
+     //LED D10 
+	GpioCtrlRegs.GPAPUD.bit.GPIO0 = 0;   									// Enable pullup on GPIO11
+    GpioDataRegs.GPASET.bit.GPIO0 = 1;   									// Load output latch
+    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 0;  									// GPIO11 = GPIO
+    GpioCtrlRegs.GPADIR.bit.GPIO0 = 1;   									// GPIO11 = output    
+	//LED D11
+	GpioCtrlRegs.GPAPUD.bit.GPIO1 = 0;   									// Enable pullup on GPIO11
+    GpioDataRegs.GPASET.bit.GPIO1 = 1;   									// Load output latch
+    GpioCtrlRegs.GPAMUX1.bit.GPIO1 = 0;  									// GPIO11 = GPIO
+    GpioCtrlRegs.GPADIR.bit.GPIO1 = 1;   									// GPIO11 = output    
+	//LED D12
+	GpioCtrlRegs.GPAPUD.bit.GPIO2 = 0;   									// Enable pullup on GPIO11
+    GpioDataRegs.GPASET.bit.GPIO2 = 1;   									// Load output latch
+    GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 0;  									// GPIO11 = GPIO
+    GpioCtrlRegs.GPADIR.bit.GPIO2 = 1;   									// GPIO11 = output   
+	//LED D13    
+    GpioCtrlRegs.GPAPUD.bit.GPIO3 = 0;   									// Enable pullup on GPIO11
+    GpioDataRegs.GPASET.bit.GPIO3 = 1;   									// Load output latch
+    GpioCtrlRegs.GPAMUX1.bit.GPIO3 = 0;  									// GPIO11 = GPIO
+    GpioCtrlRegs.GPADIR.bit.GPIO3 = 1;   									// GPIO11 = output  
 
     EDIS;  
     
@@ -88,16 +131,124 @@ void Init_LEDS_Gpio(void)
     RST_BIT2;
     RST_BIT3;
     SET_BIT4;   
+    LED1_OFF;
+    LED2_OFF;
+    LED3_OFF;
+    LED4_OFF;
 }
 /*****************************************************************************************************/
 
-/*********************************************延时函数************************************************/
+/*********************************************Delay Functions************************************************/
 void delay(Uint32 t)
 {
 	Uint32 i = 0;
 	for (i = 0; i < t; i++);
 }
 /*****************************************************************************************************/
+void ads1299_WREG(Uint16 addr, Uint16 nums, Uint16 *Data)//data must be prepared with data[i]<<8&0xff00
+{
+	addr=((addr<<8)|0x4000|nums);
+	nums++;//convert L-1
+	Spi_Send_Data=addr&0xff00;
+	addr=(addr<<8)&0xff00;
+	spi_xmit(Spi_Send_Data);
+	spi_xmit(addr);
+	for(i=0;i<nums;i++)//while(nums>0)
+	{
+		spi_xmit(Data[i]);
+		//num--;
+	}
+	while (SpiaRegs.SPIFFRX.bit.RXFFST != (nums+2)) {}//do not exceed 16
+	for(i=0;i<nums+2;i++)//while(nums>0)
+	{
+		Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+	}
+}
+
+void ads1299_RDATAC(Uint16 *Data_Rcv)
+{
+	spi_xmit(0x00);//Status Reg
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	spi_xmit(0x00);//Channel 1
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	spi_xmit(0x00);//Channel 2
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	spi_xmit(0x00);//Channel 3
+	spi_xmit(0x00);
+	spi_xmit(0x00);  //got first 12s
+	spi_xmit(0x00);//Channel 4
+	spi_xmit(0x00);
+	spi_xmit(0x00);  //to 15
+	while (SpiaRegs.SPIFFRX.bit.RXFFST != 12) {}
+	*(Data_Rcv)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+1)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+2)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+3)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+4)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+5)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+6)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+7)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+8)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+9)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+10)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+11)=SpiaRegs.SPIRXBUF;
+	spi_xmit(0x00);//Channel 5
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	spi_xmit(0x00);//Channel 6
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	spi_xmit(0x00);//Channel 7
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	spi_xmit(0x00);//Channel 8
+	spi_xmit(0x00);
+	spi_xmit(0x00);
+	while (SpiaRegs.SPIFFRX.bit.RXFFST != 15) {}
+	*(Data_Rcv+12)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+13)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+14)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+15)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+16)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+17)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+18)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+19)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+20)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+21)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+22)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+23)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+24)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+25)=SpiaRegs.SPIRXBUF;
+	*(Data_Rcv+26)=SpiaRegs.SPIRXBUF;
+}
+
+void ads1299_SendUARTRaw(Uint16 *Data_Rcv)
+{
+	Uint32 i = 0;
+	for (i=0;i<27;i++)
+	{
+		scib_xmit(*(Data_Rcv+i));
+		//scib_xmit(0x0055);
+	}
+	scib_xmit(0x0d);
+	scib_xmit(0x0a); //0D0A for terminate sign
+}
+
+void ads1299_ConvRcvData(Uint16 *Data_Rcv, Uint32 *EEGCH1, Uint32 *EEGCH2, Uint32 *EEGCH3, Uint32 *EEGCH4, Uint32 *EEGCH5, Uint32 *EEGCH6, Uint32 *EEGCH7,Uint32 *EEGCH8, Uint32 *STAT_Data)
+{
+	*(STAT_Data)=(Uint32)Data_Rcv[0]<<16+(Uint32)Data_Rcv[1]<<8+(Uint32)Data_Rcv[2];
+	*(EEGCH1)=(Uint32)Data_Rcv[3]<<16+(Uint32)Data_Rcv[4]<<8+(Uint32)Data_Rcv[5];
+	*(EEGCH2)=(Uint32)Data_Rcv[6]<<16+(Uint32)Data_Rcv[7]<<8+(Uint32)Data_Rcv[8];
+	*(EEGCH3)=(Uint32)Data_Rcv[9]<<16+(Uint32)Data_Rcv[10]<<8+(Uint32)Data_Rcv[11];
+	*(EEGCH4)=(Uint32)Data_Rcv[12]<<16+(Uint32)Data_Rcv[13]<<8+(Uint32)Data_Rcv[14];
+	*(EEGCH5)=(Uint32)Data_Rcv[15]<<16+(Uint32)Data_Rcv[16]<<8+(Uint32)Data_Rcv[17];
+	*(EEGCH6)=(Uint32)Data_Rcv[18]<<16+(Uint32)Data_Rcv[19]<<8+(Uint32)Data_Rcv[20];
+	*(EEGCH7)=(Uint32)Data_Rcv[21]<<16+(Uint32)Data_Rcv[22]<<8+(Uint32)Data_Rcv[23];
+	*(EEGCH8)=(Uint32)Data_Rcv[24]<<16+(Uint32)Data_Rcv[25]<<8+(Uint32)Data_Rcv[26];
+}
 
 Uint16 ads1299_read2reg(Uint16 addr, Uint16 nums)
 {
@@ -128,7 +279,7 @@ Uint16 ads1299_read2reg(Uint16 addr, Uint16 nums)
 	
 }
 
-/*********************************************Spi初始化************************************************/
+/*********************************************Init SPI************************************************/
 
 void spi_init()
 { 
@@ -196,7 +347,7 @@ void scib_msg(char * msg)
 }
 
 
-/****************************************Spi模块FIFO设置**********************************************/
+/****************************************Spi FIFO Init**********************************************/
 void spi_fifo_init()										
 {
 // Initialize SPI FIFO registers
@@ -210,7 +361,7 @@ void spi_fifo_init()
 
 /*****************************************************************************************************/
 
-/*********************************************Spi发送************************************************/
+/*********************************************Spi Xmit************************************************/
 
 void spi_xmit(Uint16 a)
 {
@@ -236,6 +387,8 @@ void main(void)
 {
 
    char *msg;
+   Uint32 ii = 0;
+   //Uint16 *Data_Rcv;
 // Step 1. Initialize System Control:
 // PLL, WatchDog, enable Peripheral Clocks
 // This example function is found in the DSP280x_SysCtrl.c file.
@@ -316,30 +469,137 @@ void main(void)
    msg = "\r\n\Start ADS1299 SPI Interface Testing\0";
    scib_msg(msg);
 
+   ADS_Rcv_Data=ads1299_read2reg(0x00,0x01);//3e96 for default
    
-	for(;;)
-	{
-		for(i=0;i<23;i++)
-		{
-		ADS_Rcv_Data=ads1299_read2reg(ads_addr,0x01);
-		delay(25000);										//延时配合人眼反应时间
+   Data[0]=0x9600;Data[1]=0xc000;
+   ads1299_WREG(0x01,0x01,Data);
+   //CH1-8
+   Data[0]=0x0100;Data[1]=0x0100;Data[2]=0x0100;Data[3]=0x0100;Data[4]=0x0100;Data[5]=0x0100;Data[6]=0x0100;Data[7]=0x0100;
+   ads1299_WREG(0x05,0x07,Data);
+   //MISC REF
+   //Data[0]=0x2000;Data[1]=0x0000;
+   //ads1299_WREG(0x15,0x01,Data);
+   
+   ADS_Rcv_Data=ads1299_read2reg(0x01,0x01);//95c0 if correct
+   
+   while(1)
+   {
+   LED1_OFF;
+   while(ScibRegs.SCIFFRX.bit.RXFFST <1) { }
+   chr=ScibRegs.SCIRXBUF.all;
+   LED1_ON;
+   LED2_ON;
+   LED3_ON;
+   switch(chr)
+   {
+   	case 'B': //processing baseline mode
+   	 LED3_ON;
+   	 LED2_OFF;
+   	 Data[0]=0x9600;Data[1]=0xc000;
+     ads1299_WREG(0x01,0x01,Data);
+     Data[0]=0x0100;Data[1]=0x0100;Data[2]=0x0100;Data[3]=0x0100;Data[4]=0x0100;Data[5]=0x0100;Data[6]=0x0100;Data[7]=0x0100;
+     ads1299_WREG(0x05,0x07,Data);
+     //Prepar for reading data
+   	SET_BIT3; //START!
+   	spi_xmit(0x1000);// RDATAC command
+   	while (SpiaRegs.SPIFFRX.bit.RXFFST != 1) {}
+   	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+   	for(ii=0;ii<600;ii++)
+   	{
+   	  	while (GpioDataRegs.GPADAT.bit.GPIO15==1) {} //DRDY is in high
+   	  	ads1299_RDATAC(Data_Rcv);
+   	  	//ads1299_ConvRcvData(Data_Rcv,&EEGCH1,&EEGCH2,&EEGCH3,&EEGCH4,&EEGCH5,&EEGCH6,&EEGCH7,&EEGCH8,&STAT_Data);
+   	  	ads1299_SendUARTRaw(Data_Rcv);
+   	}
+   	 break;
+   	case 'S'://Signal Acqusision mode
+   	 LED3_OFF;
+   	 LED2_ON;
+     Data[0]=0x9600;Data[1]=0xc000;
+     ads1299_WREG(0x01,0x01,Data);
+     //Data[0]=0x5000;Data[1]=0x5000;Data[2]=0x5000;Data[3]=0x5000;Data[4]=0x5000;Data[5]=0x5000;Data[6]=0x5000;Data[7]=0x5000;
+     //Data[0]=0x0000;Data[1]=0x0000;Data[2]=0x0000;Data[3]=0x0000;Data[4]=0x0000;Data[5]=0x0000;Data[6]=0x0000;Data[7]=0x0000;
+     //Data[0]=0x6000;Data[1]=0x6000;Data[2]=0x6000;Data[3]=0x6000;Data[4]=0x6000;Data[5]=0x6000;Data[6]=0x6000;Data[7]=0x6000;
+     Data[0]=0x3000;Data[1]=0x3000;Data[2]=0x3000;Data[3]=0x3000;Data[4]=0x3000;Data[5]=0x3000;Data[6]=0x3000;Data[7]=0x3000;
+     ads1299_WREG(0x05,0x07,Data);
+     //MISC REF
+     Data[0]=0x2000;Data[1]=0x0000;
+     ads1299_WREG(0x15,0x01,Data);
+   	//Prepar for reading data
+   	SET_BIT3; //START!
+   	spi_xmit(0x1000);// RDATAC command
+   	while (SpiaRegs.SPIFFRX.bit.RXFFST != 1) {}
+   	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+   	
+   	for(;;)
+   	{
+   	  	while (GpioDataRegs.GPADAT.bit.GPIO15==1) {} //DRDY is in high
+   	  	ads1299_RDATAC(Data_Rcv);
+   	  	//ads1299_ConvRcvData(Data_Rcv,&EEGCH1,&EEGCH2,&EEGCH3,&EEGCH4,&EEGCH5,&EEGCH6,&EEGCH7,&EEGCH8,&STAT_Data);
+   	  	ads1299_SendUARTRaw(Data_Rcv);
+   	  	if(ScibRegs.SCIFFRX.bit.RXFFST >0) 
+   	  	{
+   	  		RST_BIT3;
+   	  		break;//received something, stop the running
+   	  	}
+   	}
+   	 break;
+   	case 'T': //test signal plotting mode
+   	 LED3_OFF;
+   	 LED2_ON;
+     Data[0]=0x9600;Data[1]=0xd000;
+     ads1299_WREG(0x01,0x01,Data);
+     Data[0]=0x0500;Data[1]=0x0500;Data[2]=0x0500;Data[3]=0x0500;Data[4]=0x0500;Data[5]=0x0500;Data[6]=0x0500;Data[7]=0x0500;
+     ads1299_WREG(0x05,0x07,Data);
+   	//Prepar for reading data
+   	SET_BIT3; //START!
+   	spi_xmit(0x1000);// RDATAC command
+   	while (SpiaRegs.SPIFFRX.bit.RXFFST != 1) {}
+   	Spi_Rcv_Data=SpiaRegs.SPIRXBUF;	
+   	
+   	for(;;)
+   	{
+   	  	while (GpioDataRegs.GPADAT.bit.GPIO15==1) {} //DRDY is in high
+   	  	ads1299_RDATAC(Data_Rcv);
+   	  	//ads1299_ConvRcvData(Data_Rcv,&EEGCH1,&EEGCH2,&EEGCH3,&EEGCH4,&EEGCH5,&EEGCH6,&EEGCH7,&EEGCH8,&STAT_Data);
+   	  	ads1299_SendUARTRaw(Data_Rcv);
+   	  	if(ScibRegs.SCIFFRX.bit.RXFFST >0) 
+   	  	{
+   	  		RST_BIT3;
+   	  		break;//received something, stop the running
+   	  	}
+   	}
+   	break;
+   case 'E': //Exit Mode
+    LED3_OFF;
+   	LED2_OFF;
+    break;
+   }
+   }
+   
+	//for(;;)
+	//{
+		//for(i=0;i<23;i++)
+		//{
+		//ADS_Rcv_Data=ads1299_read2reg(ads_addr,0x01);
+		//delay(25000);										//延时配合人眼反应时间
 		//scib_xmit(0x55);
-		msg = "\r\n\Read Reg:0x\0";
-		scib_msg(msg);
-		data_to_send = ads_addr+0x30;
-		scib_xmit(data_to_send);
-		msg = "  Results:0x\0";
-		scib_msg(msg);
-		Sci_Send_Data=((ADS_Rcv_Data>>8)&0x00ff);
-		data_to_send = Sci_Send_Data+0x30;
-		scib_xmit(data_to_send);
-		Sci_Send_Data=(ADS_Rcv_Data&0x00ff);
-		data_to_send = Sci_Send_Data+0x30;
-		scib_xmit(data_to_send);
-		delay(25000);
-		ads_addr++;
-		}
-	}
+		//msg = "\r\n\Read Reg:0x\0";
+		//scib_msg(msg);
+		//data_to_send = ads_addr+0x30;
+		//scib_xmit(data_to_send);
+		//msg = "  Results:0x\0";
+		//scib_msg(msg);
+		//Sci_Send_Data=((ADS_Rcv_Data>>8)&0x00ff);
+		//data_to_send = Sci_Send_Data+0x30;
+		//scib_xmit(data_to_send);
+		//Sci_Send_Data=(ADS_Rcv_Data&0x00ff);
+		//data_to_send = Sci_Send_Data+0x30;
+		//scib_xmit(data_to_send);
+		//delay(25000);
+		//ads_addr++;
+		//}
+	//}
 
 
 } 	

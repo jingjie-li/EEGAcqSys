@@ -10947,7 +10947,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <part name="C78" library="SparkFun-Capacitors" deviceset="22PF" device="-0402-50V-5%" value="22pF"/>
 <part name="C79" library="SparkFun-Capacitors" deviceset="22PF" device="-0402-50V-5%" value="22pF"/>
 <part name="GND25" library="SparkFun-PowerSymbols" deviceset="GND2" device=""/>
-<part name="SUPPLY23" library="SparkFun-PowerSymbols" deviceset="3.3V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -12782,7 +12781,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <instance part="C78" gate="G$1" x="304.8" y="50.8" rot="R90"/>
 <instance part="C79" gate="G$1" x="304.8" y="40.64" rot="R90"/>
 <instance part="GND25" gate="G$1" x="297.18" y="34.29"/>
-<instance part="SUPPLY23" gate="G$1" x="314.96" y="55.88"/>
 </instances>
 <busses>
 </busses>
@@ -13344,11 +13342,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <pinref part="C73" gate="G$1" pin="1"/>
 <wire x1="-45.72" y1="53.34" x2="-45.72" y2="55.88" width="0.1524" layer="91"/>
 </segment>
-<segment>
-<pinref part="U$3" gate="G$1" pin="V3"/>
-<wire x1="320.04" y1="55.88" x2="314.96" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="SUPPLY23" gate="G$1" pin="3.3V"/>
-</segment>
 </net>
 <net name="1.8V" class="0">
 <segment>
@@ -13523,32 +13516,6 @@ Source: http://www.cypress.com .. 38-12025_0P_V.pdf</description>
 <wire x1="307.34" y1="40.64" x2="309.88" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="309.88" y1="40.64" x2="309.88" y2="43.18" width="0.1524" layer="91"/>
 <junction x="309.88" y="43.18"/>
-</segment>
-</net>
-<net name="N$33" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="TX"/>
-<wire x1="320.04" y1="60.96" x2="314.96" y2="60.96" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$34" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="RX"/>
-<wire x1="320.04" y1="58.42" x2="314.96" y2="58.42" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="D+_ISO" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="D+"/>
-<wire x1="320.04" y1="53.34" x2="317.5" y2="53.34" width="0.1524" layer="91"/>
-<label x="317.5" y="53.34" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="D-_ISO" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="D-"/>
-<wire x1="320.04" y1="50.8" x2="317.5" y2="50.8" width="0.1524" layer="91"/>
-<label x="317.5" y="50.8" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
