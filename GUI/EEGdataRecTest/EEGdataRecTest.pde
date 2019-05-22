@@ -157,7 +157,7 @@ void setup() {
   frameRate(30);
   size(1000, 800);
   printArray(Serial.list());
-  myPort = new Serial(this, Serial.list()[5], 115200); 
+  myPort = new Serial(this, Serial.list()[2], 115200); 
   myPort.write('B');
   //inBufferWaste = myPort.readBytes(30);
   //myPort.clear();
@@ -218,12 +218,12 @@ void readDataThread(){
           println(offsetSum/500);
           if(EnteringPloting==false){
             delay(10);
-            myPort.write('S');
+            myPort.write('T');
             EnteringPloting=true;
           }
-          EEGdatasRead[0]-=offsetSum/500;
-          //updateDataEEG(EEGdatasRead[6]);
-          updateDataEEG(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[0])));
+          //EEGdatasRead[0]-=offsetSum/500;
+          //updateDataEEG(EEGdatasRead[2]);
+          updateDataEEG(LowPassFilter.runfilter(NotchFilter.runfilter(EEGdatasRead[3])));
         }
         delay(1);
       }
@@ -257,8 +257,13 @@ boolean ifexist0D0A(byte[] inBufferWaste){
 }
 
 void stop() {
-  myPort.write('T');
+  myPort.write('E');
 } 
+
+void mousePressed() {
+  myPort.write('E');
+  exit(); 
+}
 
 void updateDataEEG(float EEGdata){
   if (pointerEEG>=999){
@@ -268,8 +273,8 @@ void updateDataEEG(float EEGdata){
   //if(EEG1_baseline.isabnormal(EEGdata)){
     //EEGdata=EEG1_baseline.prevdata;
   //}
-  //a=1;
   a=0.1;
+  //a=0.01;
   //b=1800; 
   b=EEG1_baseline.compute(a,200);
   //b=-900; 
