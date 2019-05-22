@@ -12,14 +12,14 @@
 #include "DSP2833x_Device.h"     // DSP2833x Headerfile Include File
 #include "DSP2833x_Examples.h"   // DSP2833x Examples Include File
 /********************************宏定义数码管位选 IO 接口*******************************************/
-#define  SET_BIT4	GpioDataRegs.GPASET.bit.GPIO16	 = 1 		//与外设板 8_LEDS 端子的 IO52 对应					
-#define  RST_BIT4	GpioDataRegs.GPACLEAR.bit.GPIO16 = 1		//与外设板 8_LEDS 端子的 IO52 对应
-#define  SET_BIT3   GpioDataRegs.GPASET.bit.GPIO17	 = 1		//与外设板 8_LEDS 端子的 IO53 对应
-#define  RST_BIT3	GpioDataRegs.GPACLEAR.bit.GPIO17 = 1		//与外设板 8_LEDS 端子的 IO53 对应
-#define  SET_BIT2   GpioDataRegs.GPBSET.bit.GPIO62	 = 1		//与外设板 8_LEDS 端子的 IO54 对应
-#define  RST_BIT2	GpioDataRegs.GPBCLEAR.bit.GPIO62 = 1		//与外设板 8_LEDS 端子的 IO54 对应
-#define  SET_BIT1   GpioDataRegs.GPBSET.bit.GPIO63	 = 1		//与外设板 8_LEDS 端子的 IO55 对应
-#define  RST_BIT1	GpioDataRegs.GPBCLEAR.bit.GPIO63 = 1		//与外设板 8_LEDS 端子的 IO55 对应
+#define  SET_BIT4	GpioDataRegs.GPASET.bit.GPIO16	 = 1 		//CS = 1					
+#define  RST_BIT4	GpioDataRegs.GPACLEAR.bit.GPIO16 = 1		//CS = 0
+#define  SET_BIT3   GpioDataRegs.GPASET.bit.GPIO17	 = 1		//START  = 1
+#define  RST_BIT3	GpioDataRegs.GPACLEAR.bit.GPIO17 = 1		//START  = 0
+#define  SET_BIT2   GpioDataRegs.GPBSET.bit.GPIO60	 = 1		//RST IO62
+#define  RST_BIT2	GpioDataRegs.GPBCLEAR.bit.GPIO60 = 1		//与外设板 8_LEDS 端子的 IO54 对应
+#define  SET_BIT1   GpioDataRegs.GPBSET.bit.GPIO61	 = 1		//PWD IO61
+#define  RST_BIT1	GpioDataRegs.GPBCLEAR.bit.GPIO61 = 1		//与外设板 8_LEDS 端子的 IO55 对应
 #define LED1_OFF		GpioDataRegs.GPASET.bit.GPIO0 = 1							//LED D10 on
 #define LED1_ON			GpioDataRegs.GPACLEAR.bit.GPIO0 = 1						//LED D10 off
 #define LED2_OFF		GpioDataRegs.GPASET.bit.GPIO1 = 1							//LED D11 on
@@ -90,15 +90,15 @@ void Init_LEDS_Gpio(void)
     GpioCtrlRegs.GPAMUX2.bit.GPIO17 = 0;  					// GPIO16 = GPIO
     GpioCtrlRegs.GPADIR.bit.GPIO17 = 1;   					// GPIO16 = output
     
-	GpioCtrlRegs.GPBPUD.bit.GPIO62 = 0;   					// Enable pullup on GPIO11
-    GpioDataRegs.GPBSET.bit.GPIO62 = 1;   					// Load output latch
-    GpioCtrlRegs.GPBMUX2.bit.GPIO62 = 0;  					// GPIO17 = GPIO
-    GpioCtrlRegs.GPBDIR.bit.GPIO62 = 1;   					// GPIO17 = output
+	GpioCtrlRegs.GPBPUD.bit.GPIO60 = 0;   					// Enable pullup on GPIO11
+    GpioDataRegs.GPBSET.bit.GPIO60 = 1;   					// Load output latch
+    GpioCtrlRegs.GPBMUX2.bit.GPIO60 = 0;  					// GPIO17 = GPIO
+    GpioCtrlRegs.GPBDIR.bit.GPIO60 = 1;   					// GPIO17 = output
     
-	GpioCtrlRegs.GPBPUD.bit.GPIO63 = 0;   					// Enable pullup on GPIO11
-    GpioDataRegs.GPBSET.bit.GPIO63 = 1;   					// Load output latch
-    GpioCtrlRegs.GPBMUX2.bit.GPIO63 = 0;  					// GPIO19 = GPIO
-    GpioCtrlRegs.GPBDIR.bit.GPIO63 = 1;   					// GPIO19 = output
+	GpioCtrlRegs.GPBPUD.bit.GPIO61 = 0;   					// Enable pullup on GPIO11
+    GpioDataRegs.GPBSET.bit.GPIO61 = 1;   					// Load output latch
+    GpioCtrlRegs.GPBMUX2.bit.GPIO61 = 0;  					// GPIO19 = GPIO
+    GpioCtrlRegs.GPBDIR.bit.GPIO61 = 1;   					// GPIO19 = output
     
     
     GpioCtrlRegs.GPAMUX1.bit.GPIO15 = 0;   //congifure input
@@ -309,12 +309,16 @@ void scib_init()
 	ScibRegs.SCICTL2.bit.TXINTENA =1;
 	ScibRegs.SCICTL2.bit.RXBKINTENA =1;
 	#if (CPU_FRQ_150MHZ)
-	      ScibRegs.SCIHBAUD    =0x0000;  // 115200 baud @LSPCLK = 37.5MHz. BRR = 39.6901 0x28
-	      ScibRegs.SCILBAUD    =0x0028;
+	      //ScibRegs.SCIHBAUD    =0x0000;  // 115200 baud @LSPCLK = 37.5MHz. BRR = 39.6901 0x28
+	      //ScibRegs.SCILBAUD    =0x0028;
+	      ScibRegs.SCIHBAUD    =0x0000;  // 230400 baud @LSPCLK = 37.5MHz. BRR = 19.34505 0x13
+	      ScibRegs.SCILBAUD    =0x0013;
 	#endif
 	#if (CPU_FRQ_100MHZ)
-      ScibRegs.SCIHBAUD    =0x0000;  // 115200 baud @LSPCLK = 20MHz. BRR = 20.7014   0x15
-      ScibRegs.SCILBAUD    =0x0015;
+      //ScibRegs.SCIHBAUD    =0x0000;  // 115200 baud @LSPCLK = 20MHz. BRR = 20.7014   0x15
+      //ScibRegs.SCILBAUD    =0x0015;
+      ScibRegs.SCIHBAUD    =0x0000;  // 230400 baud @LSPCLK = 20MHz. BRR = 9.8506944   0x0a
+      ScibRegs.SCILBAUD    =0x000a;
 	#endif
 	ScibRegs.SCICTL1.all =0x0023;  // Relinquish SCI from Reset
 }
@@ -443,11 +447,18 @@ void main(void)
    scib_init();  // Initalize SCI for echoback
    
    
-   SET_BIT1; //PWD IO63
-   SET_BIT2; //RST IO62
-   RST_BIT3; //START
-   SET_BIT4; //ACT AS CS
+   SET_BIT1; //PWD IO63  61
+   SET_BIT2; //RST IO62  60?
+   RST_BIT3; //START IO IO17
+   SET_BIT4; //ACT AS CS IO16
    delay(500);
+   
+   RST_BIT1; //PWD IO63  61
+   RST_BIT2; //RST IO62  60?
+   
+   
+   SET_BIT1; //PWD IO63  61
+   SET_BIT2; //RST IO62  60?
    
    //RST_BIT4;
    spi_xmit(0x0200);// wake up
@@ -518,9 +529,9 @@ void main(void)
      Data[0]=0x9600;Data[1]=0xc000;
      ads1299_WREG(0x01,0x01,Data);
      //Data[0]=0x5000;Data[1]=0x5000;Data[2]=0x5000;Data[3]=0x5000;Data[4]=0x5000;Data[5]=0x5000;Data[6]=0x5000;Data[7]=0x5000;
-     //Data[0]=0x0000;Data[1]=0x0000;Data[2]=0x0000;Data[3]=0x0000;Data[4]=0x0000;Data[5]=0x0000;Data[6]=0x0000;Data[7]=0x0000;
+     Data[0]=0x0000;Data[1]=0x0000;Data[2]=0x0000;Data[3]=0x0000;Data[4]=0x0000;Data[5]=0x0000;Data[6]=0x0000;Data[7]=0x0000;
      //Data[0]=0x6000;Data[1]=0x6000;Data[2]=0x6000;Data[3]=0x6000;Data[4]=0x6000;Data[5]=0x6000;Data[6]=0x6000;Data[7]=0x6000;
-     Data[0]=0x3000;Data[1]=0x3000;Data[2]=0x3000;Data[3]=0x3000;Data[4]=0x3000;Data[5]=0x3000;Data[6]=0x3000;Data[7]=0x3000;
+     //Data[0]=0x3000;Data[1]=0x3000;Data[2]=0x3000;Data[3]=0x3000;Data[4]=0x3000;Data[5]=0x3000;Data[6]=0x3000;Data[7]=0x3000;
      ads1299_WREG(0x05,0x07,Data);
      //MISC REF
      Data[0]=0x2000;Data[1]=0x0000;
@@ -559,6 +570,7 @@ void main(void)
    	
    	for(;;)
    	{
+   		//while (GpioDataRegs.GPADAT.bit.GPIO15==0) {} //DRDY is in high
    	  	while (GpioDataRegs.GPADAT.bit.GPIO15==1) {} //DRDY is in high
    	  	ads1299_RDATAC(Data_Rcv);
    	  	//ads1299_ConvRcvData(Data_Rcv,&EEGCH1,&EEGCH2,&EEGCH3,&EEGCH4,&EEGCH5,&EEGCH6,&EEGCH7,&EEGCH8,&STAT_Data);
@@ -573,6 +585,7 @@ void main(void)
    case 'E': //Exit Mode
     LED3_OFF;
    	LED2_OFF;
+   	RST_BIT3;
     break;
    }
    }
