@@ -1,0 +1,57 @@
+Qty,Value,Device,Parts,Package,Description,DESCRIPTION,HEIGHT,MANUFACTURER_NAME,MANUFACTURER_PART_NUMBER,MF,MOUSER_PART_NUMBER,MOUSER_PRICE-STOCK,MPN,OC_FARNELL,OC_NEWARK,PACKAGE,PROD_ID,RS_PART_NUMBER,RS_PRICE-STOCK,SF_ID,SF_SKU,SUPPLIER,VALUE
+42,0.1uF,0.1UF-0402-16V-10%,"C22, C24, C26, C27, C33, C35, C39, C48, C55, C56, C59, C60, C61, C62, C63, C64, C65, C66, C67, C68, C69, C70, C71, C72, C73, C74, C75, C76, C77, C80, C81, C82, C83, C84, C85, C86, C87, C88, C89, C92, C93, C94",402,0.1åµF ceramic capacitors,,,,,,,,,,,,CAP-12416,,,,,,0.1uF
+2,NI,0.1UF-0402-16V-10%,"C36, C37",402,0.1åµF ceramic capacitors,,,,,,,,,,,,CAP-12416,,,,,,0.1uF
+8,0OHM,0OHM,"R4, R17, R18, R19, R20, R31, R32, R33",402,0ë© resistor,,,,,,,,,,,,,,,,,,
+11,1.0uF,1.0UF-0402-16V-10%,"C3, C7, C16, C17, C21, C23, C25, C30, C31, C32, C34",402,1åµF ceramic capacitors,,,,,,,,,,,,CAP-12417,,,,,,1.0uF
+2,1.0uF,1.0UF-0603-16V-10%,"C6, C9",603,1åµF ceramic capacitors,,,,,,,,,,,,CAP-00868,,,,,,1.0uF
+1,1.5nF,1.5NF-0402,C38,402,,,,,,,,,,,,,,,,,,,1.5nF
+1,100uF,100UF-1210-20%-10V,C29,1210,,,,,,,,,,,,,,,,,,,100uF
+1,100uF,100UF-POLAR-RADIAL-2.5MM-25V-20%,C1,CPOL-RADIAL-2.5MM-6.5MM,100åµF polarized capacitors,,,,,,,,,,,,CAP-08439,,,,,,100uF
+16,10k,10KOHM-0402-1/10W-1%,"R14, R15, R16, R23, R24, R25, R26, R27, R28, R29, R30, R53, R54, R55, R56, R66",402,10kë© resistor,,,,,,,,,,,,,,,,,,10k
+2,10nF,10NF-0402-50V-10%,"C2, C14",402,"0.01uF/10nF/10,000pF ceramic capacitors",,,,,,,,,,,,,,,,,,10nF
+1,10uF,10UF-0402-6.3V-20%,C28,402,10.0åµF ceramic capacitors,,,,,,,,,,,,,,,,,,10uF
+13,10uF,10UF-0603-6.3V-20%,"C5, C8, C10, C13, C15, C18, C20, C49, C50, C51, C52, C53, C54",603,10.0åµF ceramic capacitors,,,,,,,,,,,,CAP-11015,,,,,,10uF
+13,1k,1KOHM-0402-1%,"R22, R45, R46, R47, R48, R57, R58, R59, R60, R61, R62, R63, R64",402,1kë© resistor,,,,,,,,,,,,,,,,,,1k
+1,1M,1MOHM-0402-1/4W-5%,R3,402,1Më© resistor,,,,,,,,,,,,C26083,,,,,,1M
+1,2.2k,2.2KOHM-0603-1/10W-1%,R21,603,2.2kë© resistor,,,,,,,,,,,,RES-08272,,,,,,2.2k
+2,2.2uF,2.2UF-0402-10V-20%,"C90, C91",402,2.2åµF ceramic capacitors,,,,,,,,,,,,,,,,,,2.2uF
+4,2.2uF,2.2UF-0603-10V-20%,"C4, C11, C12, C19",603,2.2åµF ceramic capacitors,,,,,,,,,,,,CAP-07888,,,,,,2.2uF
+1,22k,22KOHM0402-1/10W-1%,R65,402,22kë© resistor,,,,,,,,,,,,,,,,,,22k
+9,22,22OHM-0402-1/10W-1%,"R36, R37, R38, R39, R40, R49, R50, R51, R52",402,22ë© resistor,,,,,,,,,,,,RES-12427,,,,,,22
+4,22pF,22PF-0402-50V-5%,"C57, C58, C78, C79",402,22pF ceramic capacitors,,,,,,,,,,,,,,,,,,22pF
+6,4.7k,4.7KOHM-0402-1/10W-1%,"R34, R35, R41, R42, R43, R44",402,4.7kë© resistor,,,,,,,,,,,,,,,,,,4.7k
+8,4.7nF,4.7NF-0402,"C40, C41, C42, C43, C44, C45, C46, C47",402,,,,,,,,,,,,,,,,,,,4.7nF
+2,4.7uF,4.7UF0603,"C95, C96",603,4.7åµF ceramic capacitors,,,,,,,,,,,,CAP-08280,,,,,,4.7uF
+9,4.99K,4.99KOHM-0402,"R5, R6, R7, R8, R9, R10, R11, R12, R13",402,,,,,,,,,,,,,,,,,,,4.99K
+2,0,560OHM_0402_1%,"R1, R2",402,,,,,,,,,,,,,RES-13766,,,,,,560
+1,ADS1299-X,ADS1299-X,IC1,QFP50P1200X1200X120-64N,ADS1299-x 24-Bit  Analog-to-Digital Converters (ADCs),ADS1299-x 24-Bit  Analog-to-Digital Converters (ADCs),1.2mm,Texas Instruments,ADS1299-X,,,,,,,,,,,,,,
+1,ADUM4160BRWZ,ADUM4160BRWZ,IC2,SOIC127P1032X265-16N,,,,,,,,,,,,,,,,,,,
+1,,B0505S-2W-SIP,U2,SIP,,,,,,,,,,,,,,,,,,,
+1,CH340G,CH340G,U$3,SOIC16,,,,,,,,,,,,,,,,,,,
+7,,CONN_02,"J3, J4, J5, J10, J16, J17, J18",1X02,Multi connection point. Often used as Generic Header-pin footprint for 0.1 inch spaced/style header connections,,,,,,,,,,,,,,,,,,
+1,,CONN_022.54MM_SCREWTERM,J1,1X02_2.54_SCREWTERM,Multi connection point. Often used as Generic Header-pin footprint for 0.1 inch spaced/style header connections,,,,,,,,,,,,,,,,,,
+1,,CONN_023.5MM,J19,SCREWTERMINAL-3.5MM-2,Multi connection point. Often used as Generic Header-pin footprint for 0.1 inch spaced/style header connections,,,,,,,,,,,,CONN-08399,,,,,,
+4,455-1750-1-ND,CONN_03,"J12, J13, J14, J15",1X03,Multi connection point. Often used as Generic Header-pin footprint for 0.1 inch spaced/style header connections,,,,,,,,,,,,XXX-00000,,,,,,455-1750-1-ND
+1,,CONN_06SILK_FEMALE_PTH,J9,1X06,Multi connection point. Often used as Generic Header-pin footprint for 0.1 inch spaced/style header connections,,,,,,,,,,,,CONN-08437,,,,,,
+1,JTAG,CONN_07X2,J8,2X7,,,,,,,,,,,,,,,,,,,
+2,,"CONN_10"",J6"," J7""",1X10,Multi connection point. Often used as Generic Header-pin footprint for 0.1 inch spaced/style header connections,,,,,,,,,,,,CONN-11563,,,,,,
+1,12MHz,CRYSTALSMD-3.2X2.5,Y2,CRYSTAL-SMD-3.2X2.5MM,Crystals (Generic),,,,,,,,,,,,,,,,,,
+1,30MHz,CRYSTALSMD-3.2X2.5,Y1,CRYSTAL-SMD-3.2X2.5MM,Crystals (Generic),,,,,,,,,,,,,,,,,,
+1,,DIP04S,S3,DIP04S,DIL/CODE SWITCH,,,,,,,,,unknown,unknown,,,,,,,,
+1,HT7318,HT7318,U10,SOT-89,,,,,,,,,,,,,,,,,,,
+2,HT7333,HT7333,"U9, U12",SOT-89,,,,,,,,,,,,,,,,,,,
+1,2.93V,IMP809SEUR-T,U13,SOT23-3,,,,,,,,,,,,,,,,,,,2.93V
+6,3.3åµH/å±20%/450mA,INDUCTOR-0805-3.3UH,"L1, L2, L3, L4, L5, L6",805,Inductors,,,,,,,,,,,,NDUC-13076,,,,,,3.3åµH/å±20%/450mA
+1,ISO721D,ISO721D,U15,SOIC127P600X175-8N,3.3-V / 5-V HIGH-SPEED DIGITAL ISOLATORS,,,,,,,,ISO721D,-,74K5333,SOIC-8,,,,,,Texas Instruments,
+1,GREEN,LED-GREEN0603,D1,LED-0603,Green SMD LED,,,,,,,,,,,,DIO-00821,,,,,,GREEN
+10,RED,LED-RED0603,"D2, D3, D4, D5, D6, D7, D8, D9, D10, D11",LED-0603,Red SMD LED,,,,,,,,,,,,DIO-00819,,,,,,RED
+1,LP2985-33DBVT,LP2985-33DBVT,U1,SOT95P280X145-5N,150-mA LOW-NOISE LOW-DROPOUT REGULATOR WITH SHUTDOWN,,,,,,,,LP2985-33DBVT,-,43J9347,SOT-23-5,,,,,,Texas Instruments,
+1,MAX811-812,MAX811-812,U14,SOT143,MAX811/MAX812 4-Pin åµP Voltage Monitors with Manual Reset Input,,,,,,,,,,,,,,,,,,
+1,MICRO-SD_CARD_SOCKET,MICRO-SD_CARD_SOCKET,J11,MICRO-SD-SOCKET,microSD Socket for Transflash,,,,,,,,,,,,CONN-07820,,,PRT-00127,,,
+2,MOMENTARY-SWITCH-SPST-PTH-6.0MM,MOMENTARY-SWITCH-SPST-PTH-6.0MM,"S1, S2",TACTILE_SWITCH_PTH_6.0MM,Momentary Switch (Pushbutton) - SPST,,,,,,,,,,,, SWCH-08441,,,,COM-00097,,
+1,6V/2A,PPTC_HALF-AMP,F1,1206,Resettable Fuse PPTC,,,,,,,,,,,,RES-08585,,,,,,6V/0.5A
+1,TMS320F28335PGFA,TMS320F28335PGFA,U11,QFP50P2600X2600X160-176N,Digital Signal Controllers,,,,,,,,TMS320F28335PGFA,1901870,11N7235,QFP-176,,,,,,TEXAS INSTRUMENTS,
+3,TPD4E1B06DCKR,TPD4E1B06DCKR,"U6, U7, U8",SC70-6,,,,,,,,,,,,,,,,,,,
+1,TPS60403DBVT,TPS60403DBVT,U3,SOT95P280X145-5N,Unregulated 60 mA Charge pump voltage Inverter,,,,,,,,TPS60403DBVT,8457786,77C0632,SOT-23-5,,,,,,Texas Instruments,
+2,TPS73225DBVR,TPS73225DBVR,"U4, U5",SOT95P280X145-5N,,,,,,,,,,,,,,,,,,,
+1,USB_B_PTH,USB_B_PTH,J2,USB-B-PTH,USB Type B Connector,,,,,,,,,,,,CONN-08278,,,PRT-00139,,,
