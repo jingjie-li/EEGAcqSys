@@ -1,0 +1,41 @@
+\chapter{EEG信号采集模块的设计与实现}
+\echapter{Design and Implementation fo the EEG Acqusition Module}
+
+    \section{引言}
+    \esection{Introduction}
+        EEG信号具有信号幅度小、检测难度大的特性。这些特性对放大器、电源质量、
+        信号滤波均提出了很大的要求。如果从基础的放大器开始搭建会较为困难，而且难以
+        在满足便携式的要求下进行多个导联的同时采集。为了克服从放大器搭建的这些缺点
+        我们的设计主要是基于模拟前端集成芯片来实现，这样便于兼顾便携性、信号质量
+        以及导联数量的要求。我们在整个脑电采集的过程中运用了模块化设计的思想：因此
+        ，第一步的设计主要在搭载模拟前端芯片的EEG信号采集模块的PCB板，后续调试
+        通过后再以此为基础设计信号处理、传输控制部分等硬件电路。\par
+        \vspace{1 ex}
+        本章将主要描述作者对EEG信号采集模块的实现的过程，将会主要从以下几方面
+        探讨：1）模块总体的结构和设计思路；2）模块各个子系统的设计细节；3）模块设计
+        中遇到的问题以及解决。\par
+
+        
+
+        
+
+    \section{EEG信号采集模块整体结构}
+    \esection{Overall Struceure of the EEG Acqusition Module}
+
+    \section{EEG采集模块设计细节与原理}
+    \esection{Design Details and Principles of the EEG Acqusition Module}
+
+        \subsection{EEG信号采集探头}
+        \esection{EEG Siginal Acqusition Probe}
+
+        \subsection{EEG信号采集、放大核心芯片}
+        \esection{EEG signal acqusition and amplify IC}
+
+        \subsection{EEG采集模块电源系统设计}
+        \esection{Power SUpply Design of the EEG Acqusition Module}
+
+        \subsection{EEG采集模块隔离与保护系统设计}
+        \esection{Isolation and Protection Design of the EEG Acqusition Module}
+
+    \section{本章小结}
+    \esection{Brief Summary}
